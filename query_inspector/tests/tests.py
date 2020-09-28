@@ -2,7 +2,7 @@ import datetime
 import django
 from django.conf import settings
 from django.test import TestCase
-from tests.models import Sample
+from query_inspector.tests.models import Sample
 import query_inspector
 
 NUM_RECORDS = 100

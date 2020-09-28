@@ -2,7 +2,7 @@ import os
 
 SECRET_KEY = 'fake-key'
 INSTALLED_APPS = [
-    "tests",
+    "query_inspector.tests",
 ]
 
 #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
