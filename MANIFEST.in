@@ -1,0 +1,6 @@
+include LICENSE
+include README.rst HISTORY.rst
+recursive-include query_inspector/static *
+recursive-include query_inspector/templates *
+recursive-include query_inspector/management *
+recursive-include query_inspector/migrations *
