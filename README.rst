@@ -21,3 +21,20 @@ Quick start
         'quary_inspector',
     ]
 
+
+Does it work?
+-------------
+
+Running the unit tests from your project::
+
+    python manage.py test -v 2 query_inspector --settings=query_inspector.tests.test_settings
+
+Running the unit tests from your local fork::
+
+    cd django-query-inspector
+    ./runtests.py
+
+or::
+
+    coverage run --source='.' runtests.py
+    coverage report
