@@ -1,1 +1,14 @@
-<h1>ciao</h1>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extrastyle %}
+{% endblock extrastyle %}
+
+
+{% block content %}
+    <h3>django-query-inspector example</h3>
+
+    <h4>Tracks</h4>
+    {{tracks}}
+{% endblock content %}
+
