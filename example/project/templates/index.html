@@ -2,6 +2,19 @@
 {% load static %}
 
 {% block extrastyle %}
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        table td, table th {
+            border: 1px solid #ccc;
+            padding: 0 4px;
+        }
+        table th {
+            width: 33%;
+        }
+    </style>
+
 {% endblock extrastyle %}
 
 
@@ -9,6 +22,25 @@
     <h3>django-query-inspector example</h3>
 
     <h4>Tracks</h4>
-    {{tracks}}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Track</th>
+                <th>Album</th>
+                <th>Artist</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for track in tracks %}
+            <tr>
+                <td>{{track}}</td>
+                <td>{{track.album}}</td>
+                <td>{{track.album.artist}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock content %}
 

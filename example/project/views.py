@@ -6,8 +6,9 @@ from query_inspector import query_debugger
 @query_debugger
 def index(request):
 
-    tracks = Track.objects.all()[:100]
+    #tracks = Track.objects.all()
+    tracks = Track.objects.select_related('album', 'album__artist', )
 
     return render(request, 'index.html', {
-        'tracks': tracks,
+        'tracks': tracks[:1000],
     })
