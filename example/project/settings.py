@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'query_inspector.middleware.QueryCountMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -134,3 +135,20 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
+
+QUERYCOUNT = {
+    'IGNORE_ALL_REQUESTS': False,
+    'IGNORE_REQUEST_PATTERNS': [],
+    'IGNORE_SQL_PATTERNS': [],
+    'THRESHOLDS': {
+        'MEDIUM': 50,
+        'HIGH': 200,
+        'MIN_TIME_TO_LOG': 0,
+        'MIN_QUERY_COUNT_TO_LOG': 0
+    },
+    'DISPLAY_DUPLICATES': 0,
+    'DISPLAY_ALL': True,
+    'DISPLAY_PRETTIFIED': True,
+    'COLOR_FORMATTER_STYLE': 'monokai',
+    'RESPONSE_HEADER': 'X-DjangoQueryCount-Count',
+}
