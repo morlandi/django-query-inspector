@@ -2,6 +2,8 @@
 django-query-inspector
 ======================
 
+|version| |license|
+
 A collection of tools to:
 
     - render a Queryset (or a list of dictionaries) in various formats
