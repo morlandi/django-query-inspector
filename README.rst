@@ -56,7 +56,7 @@ or::
 Query counting
 --------------
 
-A middleware that prints DB query counts in Django's runserver console output.
+A middleware that prints DB query counts in Django's runserver console output (only in DEBUG mode).
 
 Adapted from: `Django Querycount <https://github.com/bradmontgomery/django-querycount>`_
 
@@ -145,6 +145,8 @@ Functions:
 def trace(message, color='yellow', on_color=None, attrs=None, prompt='', prettify=False)
     Display 'message', optionally preceed by 'prompt';
     If 'prettify' is True, format message with pprint
+
+    Color support provided by: https://pypi.org/project/termcolor/
 
 def prettyprint_query(query, colorize=True, prettify=True)
     Display the specified SQL statement
@@ -301,6 +303,9 @@ class XslxFile(object)
 class SpreadsheetQuerysetExporter(object)
     Helper class to export a queryset to a spreadsheet.
 
+Requirements:
+
+    - xlsxwriter
 
 Sample usage::
 
