@@ -11,4 +11,6 @@ __pycache__
 /*.egg-info
 
 .coverage
+query_inspector/tests/output/
+
 example/db.sqlite3

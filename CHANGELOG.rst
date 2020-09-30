@@ -9,6 +9,7 @@ v0.0.3
 * query_debugger decorator
 * tracing helpers
 * templetags helpers
+* export a Queryset to a spreadsheet
 
 v0.0.2
 ------

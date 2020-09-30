@@ -25,7 +25,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     license='MIT',
-    description='A collection of tools to inspect the SQL activity happening under the hood of a Django project.',
+    description='A collection of tools to render, export and inspect Django Querysets.',
     long_description=readme + '\n\n' + history,
     url='https://github.com/morlandi/django-query-inspector',
     author='Mario Orlandi',

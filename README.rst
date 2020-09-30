@@ -2,10 +2,11 @@
 django-query-inspector
 ======================
 
-**PRELIMINARY: NOTHING REALLY USEFUL HERE, YET. STAY TUNED**
+A collection of tools to:
 
-
-A collection of tools to inspect the SQL activity happening under the hood of a Django project
+    - render a Queryset (or a list of dictionaries) in various formats
+    - export a Queryset to a spreadsheet
+    - inspect the SQL activity happening under the hood of a Django project
 
 Quick start
 -----------
@@ -257,6 +258,9 @@ More templatetags::
     def object_as_dict(instance, fields=None, exclude=None)
     def object_as_json(instance, fields=None, exclude=None, indent=0)
 
+.. figure:: screenshots/render_queryset.png
+
+    render_queryset
 
 Generic helpers
 ---------------
@@ -281,3 +285,38 @@ def cleanup_queryset(queryset)
     Remove multiple joins on the same table, if any
 
     WARNING: can alter the origin queryset order
+
+Exporters
+---------
+
+def open_xlsx_file(filepath, mode="rb")
+    Utility to open an archive supporting the "with" statement
+
+class XslxFile(object)
+    XSLX writer
+
+    Requires: xlsxwriter
+
+class SpreadsheetQuerysetExporter(object)
+    Helper class to export a queryset to a spreadsheet.
+
+
+Sample usage::
+
+    with open_xlsx_file(filepath) as writer:
+        self.export_queryset(writer, fields, queryset)
+    assert writer.is_closed()
+
+Sample usage::
+
+    writer = csv.writer(output, delimiter=field_delimiter, quoting=csv.QUOTE_MINIMAL)
+    exporter = SpreadsheetQuerysetExporter(writer, file_format='csv')
+    exporter.export_queryset(
+        queryset,
+        included_fields=[
+            'id',
+            'description',
+            'category__id',
+            'created_by__id',
+        ]
+    )
