@@ -34,6 +34,7 @@ Quick start
     - sqlparse
     - termcolor
     - pygments
+    - xlsxwriter
 
 Does it work?
 -------------
