@@ -1,0 +1,52 @@
+
+/*
+ * Simpletable styles
+ */
+
+table.simpletable {
+    border-collapse: collapse;
+}
+table.simpletable td, table.simpletable th {
+    border: 1px solid #ccc;
+    padding: 0 4px;
+}
+
+
+/*
+ * Smarttable styles
+ */
+
+table.smarttable tr.totals {
+    background-color: #eee;
+}
+
+table.smarttable td, table.smarttable th {
+    padding: 4px 8px;
+}
+
+table.smarttable th {
+    background-color: #666;
+    color: white;
+    font-weight: normal;
+    border-bottom: 1px solid black !important;
+}
+
+
+table.smarttable td.percentage::after {
+    content: " %";
+}
+table.smarttable tr.totals td.percentage {
+    /*color: #eee;*/
+}
+
+
+table.smarttable tr:not(.totals) td.enhanced {
+    background-color: #ffc;
+}
+
+
+body.hide-debug-only table.smarttable .debug-only {
+    display: none;
+}
+table.smarttable td.debug-only { color: #336699; }
+table.smarttable th.debug-only { color: #FFFFCD; }

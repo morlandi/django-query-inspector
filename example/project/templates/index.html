@@ -1,15 +1,8 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static query_inspector_tags %}
 
 {% block extrastyle %}
     <style>
-        table {
-            border-collapse: collapse;
-        }
-        table td, table th {
-            border: 1px solid #ccc;
-            padding: 0 4px;
-        }
         table th {
             width: 33%;
         }
@@ -23,7 +16,7 @@
 
     <h4>Tracks</h4>
 
-    <table>
+    <table class="simpletable smarttable">
         <thead>
             <tr>
                 <th>Track</th>
@@ -40,6 +33,28 @@
             </tr>
             {% endfor %}
         </tbody>
+    </table>
+
+
+    <br />
+    <h3>render_queryset_as_table</h3>
+
+    <table class="simpletable smarttable">
+        {% render_queryset_as_table "id" "name|Track" "album|Album" queryset=tracks %}
+    </table>
+
+    <br />
+    <h3>render_queryset_as_text</h3>
+
+    <table class="simpletable smarttable">
+        {% render_queryset_as_text "id" "name|Track" "album|Album" queryset=tracks %}
+    </table>
+
+    <br />
+    <h3>render_queryset_as_csv</h3>
+
+    <table class="simpletable smarttable">
+        {% render_queryset_as_csv "id" "name|Track" "album|Album" queryset=tracks %}
     </table>
 
 {% endblock content %}

@@ -2,6 +2,7 @@ import datetime
 import django
 from django.conf import settings
 from django.test import TestCase
+from django.utils import timezone
 from query_inspector.tests.models import Sample
 import query_inspector
 
@@ -20,7 +21,8 @@ class BaseTestCase(TestCase):
         pass
 
     def populateModels(self):
-        now = datetime.datetime.now().date()
+        #now = datetime.datetime.now().date()
+        now = timezone.now()
         for i in range(NUM_RECORDS):
             Sample.objects.create(
                 created=now - datetime.timedelta(days=i)

@@ -28,6 +28,12 @@ Quick start
         'query_inspector.middleware.QueryCountMiddleware',
     ]
 
+4. Optional dependencies:
+
+    - sqlparse
+    - termcolor
+    - pygments
+
 Does it work?
 -------------
 
@@ -114,3 +120,164 @@ Examples::
         @query_debugger
         def dispatch(self, request, *args, **kwargs):
             ...
+
+Result:
+
+.. figure:: screenshots/query_debugger.png
+
+    query_debugger
+
+Tracing
+-------
+
+Some helper functions are available to print formatted and colored text in the console.
+
+Requirements:
+
+    - sqlparse
+    - termcolor
+    - pygments
+
+Functions:
+
+def trace(message, color='yellow', on_color=None, attrs=None, prompt='', prettify=False)
+    Display 'message', optionally preceed by 'prompt';
+    If 'prettify' is True, format message with pprint
+
+def prettyprint_query(query, colorize=True, prettify=True)
+    Display the specified SQL statement
+
+def prettyprint_queryset(qs, colorize=True, prettify=True)
+    Display the SQL statement implied by the given queryset
+
+def trace_func(fn):
+    Decorator to detect: function call, input parameters and return value
+
+def qsdump( * fields, queryset, max_rows=None)
+    See below
+
+Results:
+
+.. figure:: screenshots/prettyprint_queryset.png
+
+    prettyprint_queryset
+
+.. figure:: screenshots/trace_func.png
+
+    trace_func
+
+
+Inspect a queryset with qsdump
+------------------------------
+
+With qsdump you can:
+
+- display the formatted SQL statement
+- display the content of the queryset
+
+Parameters:
+
+    fields:
+        one or more field names; '*' means 'all'
+
+    queryset:
+        the queryset to be inspected
+
+    max_rows:
+        optionally limit the numer of rows
+
+Example::
+
+    qsdump('*', queryset=tracks, max_rows=10)
+
+|
+
+.. figure:: screenshots/qsdump.png
+
+    qsdump
+
+
+Queryset rendering
+------------------
+
+A few templatetags are available to render either a queryset or a list of dictionaries::
+
+    def render_queryset_as_table(* fields, queryset, options={})
+    def render_queryset_as_csv(* fields, queryset, options={})
+    def render_queryset_as_text(* fields, queryset, options={})
+
+
+Sample usage::
+
+    {% load static query_inspector_tags %}
+
+    <link href="{% static 'query_inspector.css' %}" rel="stylesheet" />
+
+    <table class="simpletable smarttable">
+        {% render_queryset_as_table "id" "last_name|Cognome" "first_name|Nome" ... queryset=operatori %}
+    </table>
+
+
+Parameters:
+
+queryset: a queryset of a list of dictionaries with data to rendered
+
+options:
+    - max_rows: max n. of rows to be rendered (None=all)
+    - format_date:  date formatting string; see:
+        + https://docs.djangoproject.com/en/dev/ref/settings/#date-format
+        + https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date
+    - add_totals: computes column totals and append results as bottom row
+
+fields: a list of field specifiers, espressed as:
+    - "fieldname", or
+    - "fieldname|title", or
+    - "fieldname|title|extra_classes"
+
+    Field "extra classes" with special styles:
+        - "percentage": render column as %
+        - "enhanced"
+        - "debug-only"
+
+More templatetags::
+
+    def pdb(element)
+    def ipdb(element)
+    def format_datetime(dt, include_time=True, include_seconds=False, exclude_date=False)
+    def format_date(dt)
+    def format_datetime_with_seconds(dt)
+    def format_time(t, include_seconds=False)
+    def format_time_with_seconds(t)
+    def format_timedelta(td_object, include_seconds=True)
+    def format_timediff(t1, t2, include_seconds=True)
+    def timeformat_seconds(seconds)
+    def timeformat(seconds)
+    # def format_number(value, decimals, grouping )
+    def queryset_as_json(qs)
+    def object_as_dict(instance, fields=None, exclude=None)
+    def object_as_json(instance, fields=None, exclude=None, indent=0)
+
+
+Generic helpers
+---------------
+
+def get_object_by_uuid_or_404(model, uuid_pk)
+
+    Calls get_object_or_404(model, pk=uuid_pk)
+    but also prevents "badly formed hexadecimal UUID string" unhandled exception
+
+def prettify_json(data)
+
+    Given a JSON string, returns it as a safe formatted HTML
+    Sample usage in Model::
+
+        def summary_prettified(self):
+            return prettify_json(self.summary)
+
+    then add it to the list of readonly_fields in the ModelAdmin
+
+def cleanup_queryset(queryset)
+
+    Remove multiple joins on the same table, if any
+
+    WARNING: can alter the origin queryset order

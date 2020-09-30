@@ -7,7 +7,8 @@ v0.0.3
 ------
 * querycounter middleware
 * query_debugger decorator
-...
+* tracing helpers
+* templetags helpers
 
 v0.0.2
 ------

@@ -6,7 +6,7 @@
 from django.db import connection, reset_queries
 import time
 import functools
-#from ajax_datatable.utils import trace
+from .trace import trace
 
 
 def query_debugger(func):
@@ -24,11 +24,11 @@ def query_debugger(func):
 
         end_queries = len(connection.queries)
 
-        print('******** {func}(): {num_queries} queries ({elapsed:.2f}s)'.format(
+        trace('{func}(): {num_queries} queries ({elapsed:.2f}s)'.format(
             func=func.__qualname__,
             num_queries=end_queries - start_queries,
             elapsed=end - start,
-        ))
+        ), color='blue', attrs=['reverse'])
 
         # print(f"Function : {func.__name__}")
         # print(f"Number of Queries : {end_queries - start_queries}")
