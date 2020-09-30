@@ -243,6 +243,10 @@ fields: a list of field specifiers, espressed as:
         - "enhanced"
         - "debug-only"
 
+.. figure:: screenshots/render_queryset.png
+
+    render_queryset
+
 More templatetags::
 
     def pdb(element)
@@ -260,10 +264,6 @@ More templatetags::
     def queryset_as_json(qs)
     def object_as_dict(instance, fields=None, exclude=None)
     def object_as_json(instance, fields=None, exclude=None, indent=0)
-
-.. figure:: screenshots/render_queryset.png
-
-    render_queryset
 
 Generic helpers
 ---------------
