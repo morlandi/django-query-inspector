@@ -33,7 +33,7 @@ setup(
     zip_safe=False,
     classifiers=[
         'Framework :: Django',
-        'Development Status :: 1 - Planning',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
