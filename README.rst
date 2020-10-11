@@ -17,11 +17,11 @@ Quick start
 
     pip install django-query-inspector
 
-2. Add "quary_inspector" to your INSTALLED_APPS setting like this::
+2. Add "query_inspector" to your INSTALLED_APPS setting like this::
 
     INSTALLED_APPS = [
         ...
-        'quary_inspector',
+        'query_inspector',
     ]
 
 3. Add "QueryCountMiddleware" to your MIDDLEWARE setting like this::
