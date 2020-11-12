@@ -2,6 +2,9 @@
 django-query-inspector
 ======================
 
+.. image:: https://badge.fury.io/py/django-query-inspector.svg
+    :target: https://badge.fury.io/py/django-query-inspector
+
 |version| |license|
 
 A collection of tools to:
@@ -9,6 +12,10 @@ A collection of tools to:
     - render a Queryset (or a list of dictionaries) in various formats
     - export a Queryset to a spreadsheet
     - inspect the SQL activity happening under the hood of a Django project
+
+.. contents::
+
+.. sectnum::
 
 Quick start
 -----------

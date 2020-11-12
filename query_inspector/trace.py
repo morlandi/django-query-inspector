@@ -1,6 +1,9 @@
 import pprint
+import json
 from functools import partial
+from django.db.models.query import QuerySet
 from .templatetags.query_inspector_tags import render_queryset_as_text
+from .templatetags.query_inspector_tags import render_queryset_as_data
 
 
 # Check if sqlparse is available for indentation
@@ -26,6 +29,13 @@ try:
     from pygments.formatters import TerminalTrueColorFormatter
 except ImportError:
     pygments = None
+
+
+# Check if tabulate is available for formatting
+try:
+    import tabulate
+except ImportError:
+    tabulate = None
 
 
 def trace(message, color='yellow', on_color=None, attrs=None, prompt='', prettify=False):
@@ -100,15 +110,41 @@ def trace_func(fn):
     return func_wrapper
 
 
-def qsdump(*fields, queryset, max_rows=None):
+def qsdump(*fields, queryset, max_rows=None, render_with_tabulate=True, title=""):
+
+    if title:
+        spaces = int((80 - len(title)) / 2)
+        trace(' '*spaces + title + ' '*spaces, color='yellow', attrs=['reverse', ])
+
+    is_queryset = isinstance(queryset, QuerySet)
+    if is_queryset:
+        prettyprint_queryset(queryset)
+
     options = {
         'max_rows': max_rows,
     }
-    prettyprint_queryset(queryset)
-    trace(
-        render_queryset_as_text(*fields, queryset=queryset, options=options),
-        color='white'
-    )
-    trace('# records: %d' % queryset.count(), color='white', attrs=['reverse', ])
 
+    headers, rows = render_queryset_as_data(*fields, queryset=queryset, options=options)
 
+    if tabulate and render_with_tabulate:
+        tablefmt = "fancy_grid"
+        trace(
+            tabulate.tabulate(rows, headers=headers, tablefmt=tablefmt),
+            color='white'
+        )
+    else:
+
+        # render as text
+        text = render_queryset_as_text(*fields, queryset=queryset, options=options)
+
+        # Display headers (enhanced)
+        trace(json.dumps(headers), color='white', attrs=['reverse', ])
+
+        # Display rows
+        for row in rows:
+            trace(json.dumps(row), color='white')
+
+    # Table summary
+    num_records = queryset.count() if is_queryset else len(queryset)
+    summary = '# records: %d/%d' % (len(rows), num_records)
+    trace(summary, color='white', attrs=['reverse', ])

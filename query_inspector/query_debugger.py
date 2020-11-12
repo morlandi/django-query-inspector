@@ -24,11 +24,11 @@ def query_debugger(func):
 
         end_queries = len(connection.queries)
 
-        trace('{func}(): {num_queries} queries ({elapsed:.2f}s)'.format(
+        trace(' {func}(): {num_queries} queries ({elapsed:.2f}s) '.format(
             func=func.__qualname__,
             num_queries=end_queries - start_queries,
             elapsed=end - start,
-        ), color='blue', attrs=['reverse'])
+        ), color='white', on_color='on_blue', attrs=['bold'])
 
         # print(f"Function : {func.__name__}")
         # print(f"Number of Queries : {end_queries - start_queries}")
