@@ -360,7 +360,8 @@ def render_queryset(*fields, queryset, mode, options):
         elif t == datetime.time:
             css_classes.append("numeric")
         else:
-            pass
+            if value is None:
+                css_classes.append("discreet")
 
         #css_classes = list(set(css_classes))
         css_classes = remove_duplicates(css_classes)
@@ -379,14 +380,17 @@ def render_queryset(*fields, queryset, mode, options):
     #rows = queryset if type(queryset) == list else queryset.all()
     if type(queryset) == list:
         rows = queryset
+        num_rows = len(rows)
     else:
         rows = queryset.all()
-        # Experimental: detect all fields
-        if '*' in fields and rows.count() > 0:
-            if type(rows[0]) == dict:
-                fields = tuple(rows[0].keys())
-            else:
-                fields = [f.name for f in rows[0]._meta.fields]
+        num_rows = rows.count()
+
+    # Experimental: detect all fields
+    if '*' in fields and num_rows > 0:
+        if type(rows[0]) == dict:
+            fields = tuple(rows[0].keys())
+        else:
+            fields = [f.name for f in rows[0]._meta.fields]
 
     # If required (option "max_rows") limit the number of rows
     max_rows = options.get('max_rows', None)
@@ -395,7 +399,6 @@ def render_queryset(*fields, queryset, mode, options):
 
     # Build the list of columns
     columns = build_columns(*fields)
-
 
     # Sum column totals
     totals = None
@@ -483,6 +486,14 @@ def render_queryset(*fields, queryset, mode, options):
         elif mode == "as_text":
             text = '\r\n'.join(['|'.join(row) for row in data])
 
+    elif mode in ["as_data", ]:
+
+        headers = [c['title'] for c in columns]
+        data = []
+        for row in rows:
+            data.append([render_value_as_text(row, column, options) for column in columns])
+        return headers, data
+
     else:
 
         raise Exception('Unknown mode "%s"' % mode)
@@ -529,3 +540,25 @@ def render_queryset_as_csv(*fields, queryset, options={}):
 @register.simple_tag
 def render_queryset_as_text(*fields, queryset, options={}):
     return render_queryset(*fields, mode="as_text", queryset=queryset, options=options)
+
+
+@register.simple_tag
+def render_queryset_as_data(*fields, queryset, options={}):
+    """
+    For greated control of the final rendering,
+    you can retrieve headers and data rows separately (as lists)
+
+    For example, the equivalent of:
+
+        print(render_queryset_as_text(*fields, queryset=queryset, options=options))
+
+    can be reproduced as follows:
+
+        headers, rows = render_queryset_as_data(*fields, queryset=queryset, options=options)
+
+        print('|'.join(headers))
+        for row in rows:
+            print('|'.join(row))
+        print("")
+    """
+    return render_queryset(*fields, mode="as_data", queryset=queryset, options=options)
