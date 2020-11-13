@@ -1,6 +1,5 @@
 import uuid
 import datetime
-import xlsxwriter
 from django.db import models
 
 ################################################################################
@@ -68,6 +67,7 @@ class XslxFile(object):
         self._new_workbook()
 
     def _new_workbook(self):
+        import xlsxwriter
         self.workbook = xlsxwriter.Workbook(self.filepath, self.options)
         self.num_formats = {
             'datetime': self.workbook.add_format({'num_format': 'YYYY-MM-DD HH:MM:SS'}),

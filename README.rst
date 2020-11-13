@@ -36,11 +36,16 @@ Quick start
         'query_inspector.middleware.QueryCountMiddleware',
     ]
 
-4. Optional dependencies:
+4. Optionally, include styles in your base template::
+
+    <link href="{% static 'query_inspector.css' %}" rel="stylesheet" />
+
+5. Optional dependencies:
 
     - sqlparse
     - termcolor
     - pygments
+    - tabulate
     - xlsxwriter
 
 Does it work?
