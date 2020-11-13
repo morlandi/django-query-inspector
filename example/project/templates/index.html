@@ -6,6 +6,17 @@
         table th {
             width: 33%;
         }
+
+        a.button {
+            -webkit-appearance: button;
+            -moz-appearance: button;
+            appearance: button;
+            text-decoration: none;
+            color: initial;
+            border: 1px solid black;
+            background-color: #ddd;
+            padding: 4px 8px;
+        }
     </style>
 
 {% endblock extrastyle %}
@@ -14,8 +25,21 @@
 {% block content %}
     <h3>django-query-inspector example</h3>
 
-    <h4>Tracks</h4>
+    <div style="text-align: right;">
+        <div class="toolbar">
+            <label>Export Tracks queryset:</label>
+            <a href="/tracks/download_queryset/xlsx/" class="button">Download (Excel)</a>
+            <a href="/tracks/download_queryset/csv/" class="button">Download (CSV)</a>
+        </div>
+        <br />
+        <div class="toolbar">
+            <label>Export Tracks dataset:</label>
+            <a href="/tracks/download_dataset/xlsx/" class="button">Download (Excel)</a>
+            <a href="/tracks/download_dataset/csv/" class="button">Download (CSV)</a>
+        </div>
+    </div>
 
+    <h4>Tracks</h4>
     <table class="simpletable smarttable">
         <thead>
             <tr>
@@ -45,16 +69,24 @@
 
     <br />
     <h3>render_queryset_as_text</h3>
-
-    <table class="simpletable smarttable">
+    <p>
         {% render_queryset_as_text "id" "name|Track" "album|Album" queryset=tracks %}
-    </table>
+    </p>
 
     <br />
     <h3>render_queryset_as_csv</h3>
-
-    <table class="simpletable smarttable">
+    <p>
         {% render_queryset_as_csv "id" "name|Track" "album|Album" queryset=tracks %}
+    </p>
+
+    <br />
+    <h3>render_queryset_as_data</h3>
+    {% render_queryset_as_data "id" "name|Track" "album|Album" queryset=tracks as result %}
+    <table class="simpletable">
+        <tr><td>headers</td><td>{{result.0}}</td></tr>
+        {% for row in result.1 %}
+            <tr><td>row</td><td>{{row}}</td></tr>
+        {% endfor %}
     </table>
 
 {% endblock content %}

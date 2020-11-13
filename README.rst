@@ -5,8 +5,6 @@ django-query-inspector
 .. image:: https://badge.fury.io/py/django-query-inspector.svg
     :target: https://badge.fury.io/py/django-query-inspector
 
-|version| |license|
-
 A collection of tools to:
 
     - render a Queryset (or a list of dictionaries) in various formats
@@ -143,11 +141,12 @@ Tracing
 
 Some helper functions are available to print formatted and colored text in the console.
 
-Requirements:
+Optional requirements:
 
     - sqlparse
     - termcolor
     - pygments
+    - tabulate
 
 Functions:
 
@@ -198,6 +197,12 @@ Parameters:
 
     max_rows:
         optionally limit the numer of rows
+
+    render_with_tabulate=True
+        use "tabulate" when available
+
+    title=""
+        optional title
 
 Example::
 
@@ -274,6 +279,117 @@ More templatetags::
     def object_as_dict(instance, fields=None, exclude=None)
     def object_as_json(instance, fields=None, exclude=None, indent=0)
 
+Custom rendering
+----------------
+
+For greated control of the final rendering, you can retrieve headers and data rows separately (as lists)
+using:
+
+
+    def render_queryset_as_table(* fields, queryset, options={})
+
+For example, the equivalent of:
+
+.. code:: python
+
+        print(render_queryset_as_text(*fields, queryset=queryset, options=options))
+
+can be reproduced as follows:
+
+.. code:: python
+
+        headers, rows = render_queryset_as_data(*fields, queryset=queryset, options=options)
+
+        print('|'.join(headers))
+        for row in rows:
+            print('|'.join(row))
+        print("")
+
+Download the queryset as CSV or Excel file (xlsx)
+-------------------------------------------------
+
+For historical reasons, we provide two different approaches to export the queryset as a spreadsheet:
+
+1) with the class SpreadsheetQuerysetExporter (see `Exporters`_ below)
+
+2) parsing the queryset with the aid of `render_queryset_as_table`
+
+The first requires a proper Queryset, while the second should work with either a Queryset
+or a dictionary.
+
+In both cases, two helper functions are available to build the HTTP response
+required for attachment download:
+
+- export_any_queryset
+- export_any_dataset
+
+Sample usage:
+
+.. code:: python
+
+    from django.utils import timezone
+    from query_inspector.views import export_any_queryset
+    from query_inspector.views import export_any_dataset
+
+
+    def export_tracks_queryset(request, file_format='csv'):
+        queryset = Track.objects.select_related('album', 'album__artist', )
+        filename = '%s_%s.%s' % (
+            timezone.localtime().strftime('%Y-%m-%d_%H-%M-%S'),
+            "tracks",
+            file_format,
+        )
+
+        return export_any_queryset(request, queryset, filename)
+
+
+    def export_tracks_dataset(request, file_format='csv'):
+        queryset = Track.objects.select_related('album', 'album__artist', )
+        filename = '%s_%s.%s' % (
+            timezone.localtime().strftime('%Y-%m-%d_%H-%M-%S'),
+            "tracks",
+            file_format,
+        )
+        fields = [
+            "id",
+            "name|Track",
+            "album|Album",
+        ]
+
+        return export_any_dataset(request, *fields, queryset=queryset, filename=filename)
+
+then in your template:
+
+.. code:: html
+
+    <div style="text-align: right;">
+        <div class="toolbar">
+            <label>Export Tracks queryset:</label>
+            <a href="/tracks/download_queryset/xlsx/" class="button">Download (Excel)</a>
+            <a href="/tracks/download_queryset/csv/" class="button">Download (CSV)</a>
+        </div>
+        <br />
+        <div class="toolbar">
+            <label>Export Tracks dataset:</label>
+            <a href="/tracks/download_dataset/xlsx/" class="button">Download (Excel)</a>
+            <a href="/tracks/download_dataset/csv/" class="button">Download (CSV)</a>
+        </div>
+    </div>
+
+where:
+
+.. code:: python
+
+    urlpatterns = [
+        ...
+        path('tracks/download_queryset/csv/', views.export_tracks_queryset, {'file_format': 'csv', }),
+        path('tracks/download_queryset/xlsx/', views.export_tracks_queryset, {'file_format': 'xlsx', }),
+        path('tracks/download_dataset/csv/', views.export_tracks_dataset, {'file_format': 'csv', }),
+        path('tracks/download_dataset/xlsx/', views.export_tracks_dataset, {'file_format': 'xlsx', }),
+        ...
+    ]
+
+
 Generic helpers
 ---------------
 
@@ -335,3 +451,4 @@ Sample usage::
             'created_by__id',
         ]
     )
+

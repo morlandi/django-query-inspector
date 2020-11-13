@@ -24,6 +24,10 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name="index"),
+    path('tracks/download_queryset/csv/', views.export_tracks_queryset, {'file_format': 'csv', }),
+    path('tracks/download_queryset/xlsx/', views.export_tracks_queryset, {'file_format': 'xlsx', }),
+    path('tracks/download_dataset/csv/', views.export_tracks_dataset, {'file_format': 'csv', }),
+    path('tracks/download_dataset/xlsx/', views.export_tracks_dataset, {'file_format': 'xlsx', }),
     path('admin/', admin.site.urls),
 ] \
 + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \

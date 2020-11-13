@@ -3,6 +3,12 @@
 History
 =======
 
+v0.0.4
+------
+* render_queryset_as_data added for greated control of the final rendering
+* qsdump supports tabulate
+* download the queryset as a spreadsheet
+
 v0.0.3
 ------
 * querycounter middleware
