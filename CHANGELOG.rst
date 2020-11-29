@@ -3,6 +3,12 @@
 History
 =======
 
+v0.0.5
+------
+* Tracing queries in real-time
+* Inspecting queries in a unit test
+* Helper management commands
+
 v0.0.4
 ------
 * render_queryset_as_data added for greated control of the final rendering

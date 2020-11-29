@@ -152,3 +152,26 @@ QUERYCOUNT = {
     'COLOR_FORMATTER_STYLE': 'monokai',
     'RESPONSE_HEADER': 'X-DjangoQueryCount-Count',
 }
+
+
+#
+# LOGGING
+#
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'db_console': {
+#             'level': 'DEBUG',
+#             #'class': 'logging.StreamHandler',
+#             'class': 'query_inspector.log.QueryLogHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'handlers': ['db_console', ],
+#             'level': 'DEBUG',
+#         },
+#     },
+# }

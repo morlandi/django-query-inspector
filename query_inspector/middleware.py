@@ -9,6 +9,7 @@ from django.db import connections
 from django.utils import termcolors
 
 from . app_settings import ACTUAL_QUERYCOUNT_SETTINGS
+from .trace import format_query
 
 try:
     from django.utils.deprecation import MiddlewareMixin
@@ -171,7 +172,8 @@ class QueryCountMiddleware(MiddlewareMixin):
         for query, count in queries:
             lines = '\nRepeated {0} times.'.format(count)
             if ACTUAL_QUERYCOUNT_SETTINGS['DISPLAY_PRETTIFIED']:
-                lines += "\n" + self._str_query(query) + "\n"
+                #lines += "\n" + self._str_query(query) + "\n"
+                lines += "\n" + format_query(query) + "\n"
                 output += self._colorize(lines, count)
             else:
                 lines += wrap(query)
@@ -179,37 +181,37 @@ class QueryCountMiddleware(MiddlewareMixin):
 
         return output
 
-    def _str_query(self,sql):
+    # def _str_query(self,sql):
 
-        # Borrowed by morlandi from sant527
-        # See: https://github.com/bradmontgomery/django-querycount/issues/22
+    #     # Borrowed by morlandi from sant527
+    #     # See: https://github.com/bradmontgomery/django-querycount/issues/22
 
-        # Check if Pygments is available for coloring
-        try:
-            import pygments
-            from pygments.lexers import SqlLexer
-            from pygments.formatters import TerminalTrueColorFormatter
-        except ImportError:
-            pygments = None
-        # Check if sqlparse is available for indentation
-        try:
-            import sqlparse
-        except ImportError:
-            sqlparse = None
-        # Remove leading and trailing whitespaces
-        if sqlparse:
-            # Indent the SQL query
-            sql = sqlparse.format(sql, reindent=True)
-        if pygments:
-            # Highlight the SQL query
-            sql = pygments.highlight(
-                sql,
-                SqlLexer(),
-                TerminalTrueColorFormatter(style=ACTUAL_QUERYCOUNT_SETTINGS['COLOR_FORMATTER_STYLE'])
-                #TerminalTrueColorFormatter()
-            )
+    #     # Check if Pygments is available for coloring
+    #     try:
+    #         import pygments
+    #         from pygments.lexers import SqlLexer
+    #         from pygments.formatters import TerminalTrueColorFormatter
+    #     except ImportError:
+    #         pygments = None
+    #     # Check if sqlparse is available for indentation
+    #     try:
+    #         import sqlparse
+    #     except ImportError:
+    #         sqlparse = None
+    #     # Remove leading and trailing whitespaces
+    #     if sqlparse:
+    #         # Indent the SQL query
+    #         sql = sqlparse.format(sql, reindent=True)
+    #     if pygments:
+    #         # Highlight the SQL query
+    #         sql = pygments.highlight(
+    #             sql,
+    #             SqlLexer(),
+    #             TerminalTrueColorFormatter(style=ACTUAL_QUERYCOUNT_SETTINGS['COLOR_FORMATTER_STYLE'])
+    #             #TerminalTrueColorFormatter()
+    #         )
 
-        return sql
+    #     return sql
 
     def _totals(self, which):
         reads = 0

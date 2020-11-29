@@ -24,7 +24,6 @@ def index(request):
     })
 
 
-
 def export_tracks_queryset(request, file_format='csv'):
     queryset = Track.objects.select_related('album', 'album__artist', )
     filename = '%s_%s.%s' % (

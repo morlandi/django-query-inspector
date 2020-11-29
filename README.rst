@@ -7,9 +7,11 @@ django-query-inspector
 
 A collection of tools to:
 
+    - count and trace db queries for debugging purposes or to optimize them
     - render a Queryset (or a list of dictionaries) in various formats
     - export a Queryset to a spreadsheet
     - inspect the SQL activity happening under the hood of a Django project
+    - and more ...
 
 .. contents::
 
@@ -140,6 +142,63 @@ Result:
 .. figure:: screenshots/query_debugger.png
 
     query_debugger
+
+Tracing queries in real-time
+----------------------------
+
+On rare occasions, you might want to trace queries immediately as they happen
+while stepping through the code.
+
+For that aim, configure the 'django.db.backends' logger in your settings;
+to print formatted and colored queries, provided pygments and sqlparse have been
+installed, use the **query_inspector.log.QueryLogHandler** handler::
+
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'db_console': {
+                'level': 'DEBUG',
+                #'class': 'logging.StreamHandler',
+                'class': 'query_inspector.log.QueryLogHandler',
+            },
+        },
+        'loggers': {
+            'django.db.backends': {
+                'handlers': ['db_console', ],
+                'level': 'DEBUG',
+            },
+        },
+    }
+
+Inspecting queries in a unit test
+---------------------------------
+
+This is not obvious, since unit tests are run with DEBUG disabled.
+
+Django provides a convenient **CaptureQueriesContext** for this:
+
+.. code:: python
+
+    import pprint
+    from django import db
+    from django.test.utils import CaptureQueriesContext
+
+    def text_whatever(self):
+
+        db.reset_queries()
+        with CaptureQueriesContext(db.connection) as context:
+
+            ... do your stuff ...
+
+        num_queries = context.final_queries - context.initial_queries
+        print('num_queries: %d' % num_queries)
+        #pprint.pprint(context.captured_queries)
+
+
+More examples are available here:
+
+`Python django.test.utils.CaptureQueriesContext() Examples <https://www.programcreek.com/python/example/74788/django.test.utils.CaptureQueriesContext>`_
 
 Tracing
 -------
@@ -457,3 +516,99 @@ Sample usage::
         ]
     )
 
+Helper management commands
+--------------------------
+
+A few management commands are provided to:
+
+    - quickly download database and/or media file from a remote project's instance
+    - save/restore a backup copy of database and/or media files to/from a local backup folder
+
+Database actions require Postrgresql; downloading from remote instance requires
+read access via SSH.
+
+You're advised to double-check implied actions by dry-running these commands
+before proceeding.
+
+**sitecopy: Syncs database and media files for local project from a remote instance**
+
+Settings::
+
+    REMOTE_HOST_DEFAULT = getattr(settings, 'SITECOPY_REMOTE_HOST_DEFAULT', '<REMOTE_HOST>')
+    PROJECT = getattr(settings, 'SITECOPY_PROJECT', '<PROJECT>')
+    SOURCE_MEDIA_FOLDER = getattr(settings, 'SITECOPY_SOURCE_MEDIA_FOLDER', '/home/%s/public/media/' % PROJECT)
+
+Usage::
+
+    usage: manage.py sitecopy [-h] [--dry-run] [--quiet] [--host HOST] [-v {0,1,2,3}] [--settings SETTINGS]
+
+    Syncs database and media files for project "gallery" from remote server "gallery.brainstorm.it"
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --dry-run, -d         Dry run (simulate actions)
+      --quiet, -q           do not require user confirmation before executing commands
+      --host HOST           Default: "gallery.brainstorm.it"
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the
+                            DJANGO_SETTINGS_MODULE environment variable will be used.
+
+
+**dump_local_data: Dump local db and media for backup purposes (and optionally remove old backup files)**
+
+Settings::
+
+    DUMP_LOCAL_DATA_TARGET_FOLDER = getattr(settings, 'DUMP_LOCAL_DATA_TARGET_FOLDER', os.path.join(settings.BASE_DIR, '..', 'dumps', 'localhost'))
+
+Usage::
+
+    usage: manage.py dump_local_data [-h] [--target target] [--dry-run] [--max-age MAX_AGE] [--no-gzip] [--legacy]
+                                     [-v {0,1,2,3}] [--settings SETTINGS]
+
+    Dump local db and media for backup purposes (and optionally remove old backup files)
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --target target, -t target
+                            choices: db, media, all; default: db
+      --dry-run, -d         Dry run (simulation)
+      --max-age MAX_AGE, -m MAX_AGE
+                            If > 0, remove backup files old "MAX_AGE days" or more
+      --no-gzip             Do not compress result
+      --legacy              use legacy Postgresql command syntax
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the
+                            DJANGO_SETTINGS_MODULE environment variable will be used.
+
+
+**restore_from_local_data: Restore db and media from local backups**
+
+Settings::
+
+    DUMP_LOCAL_DATA_TARGET_FOLDER = getattr(settings, 'DUMP_LOCAL_DATA_TARGET_FOLDER', os.path.join(settings.BASE_DIR, '..', 'dumps', 'localhost'))
+
+Usage::
+
+    usage: manage.py restore_from_local_data [-h] [--target target] [--dry-run] [--no-gzip] [--source-subfolder SOURCE_SUBFOLDER]
+                                             [-v {0,1,2,3}] [--settings SETTINGS]
+                                             prefix
+
+    Restore db and media from local backups; source folder is "/Volumes/VMS3/django_storage/gallery/dumps/localhost"
+
+    positional arguments:
+      prefix                Initial substring to match the filename to restore from; provide enough characters to match a single file
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --target target, -t target
+                            choices: db, media, all; default: db
+      --dry-run, -d         Dry run (simulation)
+      --no-gzip             Do not compress result
+      --source-subfolder SOURCE_SUBFOLDER, -s SOURCE_SUBFOLDER
+                            replaces "localhost" in DUMP_LOCAL_DATA_TARGET_FOLDER
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the
+                            DJANGO_SETTINGS_MODULE environment variable will be used.
