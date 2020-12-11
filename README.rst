@@ -486,13 +486,13 @@ def cleanup_queryset(queryset)
 Exporters
 ---------
 
-def open_xlsx_file(filepath, mode="rb")
-    Utility to open an archive supporting the "with" statement
-
 class XslxFile(object)
     XSLX writer
 
     Requires: xlsxwriter
+
+def open_xlsx_file(filepath, mode="rb")
+    Utility to open an archive supporting the "with" statement
 
 Sample usage::
 
