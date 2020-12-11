@@ -379,7 +379,7 @@ For historical reasons, we provide two different approaches to export the querys
 2) parsing the queryset with the aid of `render_queryset_as_table`
 
 The first requires a proper Queryset, while the second should work with either a Queryset
-or a dictionary.
+or a list of dictionares.
 
 In both cases, two helper view functions are available to build the HTTP response
 required for attachment download:
