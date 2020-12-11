@@ -382,10 +382,11 @@ The first requires a proper Queryset, while the second should work with either a
 or a list of dictionares.
 
 In both cases, two helper view functions are available to build the HTTP response
-required for attachment download:
+required for attachment download::
 
-- export_any_queryset(request, queryset, filename, excluded_fields=[], included_fields=[], csv_field_delimiter = ";")
-- export_any_dataset(request, *fields, queryset, filename, csv_field_delimiter = ";")
+    export_any_queryset(request, queryset, filename, excluded_fields=[], included_fields=[], csv_field_delimiter = ";")
+
+    export_any_dataset(request, *fields, queryset, filename, csv_field_delimiter = ";")
 
 The helper function normalized_export_filename(title, extension) might be used
 to build filenames consistently.
