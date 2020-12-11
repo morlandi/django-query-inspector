@@ -381,30 +381,35 @@ For historical reasons, we provide two different approaches to export the querys
 The first requires a proper Queryset, while the second should work with either a Queryset
 or a dictionary.
 
-In both cases, two helper functions are available to build the HTTP response
+In both cases, two helper view functions are available to build the HTTP response
 required for attachment download:
 
-- export_any_queryset
-- export_any_dataset
+- export_any_queryset(request, queryset, filename, excluded_fields=[], included_fields=[], csv_field_delimiter = ";")
+- export_any_dataset(request, *fields, queryset, filename, csv_field_delimiter = ";")
+
+The helper function normalized_export_filename(title, extension) might be used
+to build filenames consistently.
 
 Sample usage:
 
 .. code:: python
 
     from django.utils import timezone
-    from query_inspector.views import export_any_queryset
+    from query_inspector.views import normalized_export_filename
     from query_inspector.views import export_any_dataset
 
 
     def export_tracks_queryset(request, file_format='csv'):
         queryset = Track.objects.select_related('album', 'album__artist', )
-        filename = '%s_%s.%s' % (
-            timezone.localtime().strftime('%Y-%m-%d_%H-%M-%S'),
-            "tracks",
-            file_format,
+        filename = normalized_export_filename('tracks', file_format)
+        return export_any_queryset(
+            request,
+            queryset,
+            filename,
+            excluded_fields=[],
+            included_fields=[],
+            csv_field_delimiter = ";"
         )
-
-        return export_any_queryset(request, queryset, filename)
 
 
     def export_tracks_dataset(request, file_format='csv'):
@@ -489,18 +494,14 @@ class XslxFile(object)
 
     Requires: xlsxwriter
 
-class SpreadsheetQuerysetExporter(object)
-    Helper class to export a queryset to a spreadsheet.
-
-Requirements:
-
-    - xlsxwriter
-
 Sample usage::
 
     with open_xlsx_file(filepath) as writer:
         self.export_queryset(writer, fields, queryset)
     assert writer.is_closed()
+
+class SpreadsheetQuerysetExporter(object)
+    Helper class to export a queryset to a spreadsheet.
 
 Sample usage::
 
@@ -515,6 +516,8 @@ Sample usage::
             'created_by__id',
         ]
     )
+
+See also: `Download the queryset as CSV or Excel file (xlsx)`_
 
 Helper management commands
 --------------------------
