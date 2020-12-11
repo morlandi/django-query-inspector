@@ -3,6 +3,11 @@
 History
 =======
 
+v0.0.6
+------
+* normalized_export_filename() helper
+* improved documentation
+
 v0.0.5
 ------
 * Tracing queries in real-time
