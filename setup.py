@@ -27,6 +27,7 @@ setup(
     license='MIT',
     description='A collection of tools to render, export and inspect Django Querysets.',
     long_description=readme + '\n\n' + history,
+    long_description_content_type='text/x-rst',
     url='https://github.com/morlandi/django-query-inspector',
     author='Mario Orlandi',
     author_email='morlandi@brainstorm.it',
