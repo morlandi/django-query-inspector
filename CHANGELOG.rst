@@ -3,6 +3,10 @@
 History
 =======
 
+v1.0.0
+------
+* fix format_datetime
+
 v0.0.6
 ------
 * normalized_export_filename() helper
