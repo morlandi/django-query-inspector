@@ -170,14 +170,15 @@ class QueryCountMiddleware(MiddlewareMixin):
         queries = list(queries)
 
         for query, count in queries:
-            lines = '\nRepeated {0} times.'.format(count)
+            lines = ['\nRepeated {0} times.'.format(count), ]
             if ACTUAL_QUERYCOUNT_SETTINGS['DISPLAY_PRETTIFIED']:
                 #lines += "\n" + self._str_query(query) + "\n"
-                lines += "\n" + format_query(query) + "\n"
-                output += self._colorize(lines, count)
+                #lines += "\n" + format_query(query) + "\n"
+                lines.append(format_query(query))
             else:
                 lines += wrap(query)
-                lines = "\n".join(lines) + "\n"
+            lines = "\n".join(lines) + "\n"
+            output += self._colorize(lines, count)
 
         return output
 

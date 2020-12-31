@@ -3,6 +3,10 @@
 History
 =======
 
+v1.0.1
+------
+* fix unprettified duplicate_queries dump
+
 v1.0.0
 ------
 * fix format_datetime
