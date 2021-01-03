@@ -183,6 +183,7 @@ Django provides a convenient **CaptureQueriesContext** for this:
     import pprint
     from django import db
     from django.test.utils import CaptureQueriesContext
+    from query_inspector import prettyprint_query
 
     def text_whatever(self):
 
@@ -194,6 +195,10 @@ Django provides a convenient **CaptureQueriesContext** for this:
         num_queries = context.final_queries - context.initial_queries
         print('num_queries: %d' % num_queries)
         #pprint.pprint(context.captured_queries)
+
+        for row in context.captured_queries:
+            prettyprint_query(row['sql'])
+            print('time: ' + row['time'])
 
 
 More examples are available here:
