@@ -3,6 +3,10 @@
 History
 =======
 
+v1.0.2
+------
+* use apply_autofit() in export_any_queryset()
+
 v1.0.1
 ------
 * fix unprettified duplicate_queries dump

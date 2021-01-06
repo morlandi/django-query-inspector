@@ -48,6 +48,7 @@ def export_any_queryset(request, queryset, filename, excluded_fields=[], include
             # writer.apply_autofit()
             exporter = SpreadsheetQuerysetExporter(writer, file_format=file_format)
             exporter.export_queryset(queryset, excluded_fields=excluded_fields, included_fields=included_fields)
+            writer.apply_autofit()
         assert writer.is_closed()
     else:
         raise Exception('Wrong export file format "%s"' % file_format)
