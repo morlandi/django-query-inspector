@@ -4,6 +4,7 @@ import re
 import datetime
 import io
 import csv
+import decimal
 from django.urls.exceptions import NoReverseMatch
 from django import template
 from django.urls import reverse
@@ -308,7 +309,7 @@ def render_queryset(*fields, queryset, mode, options):
             return float(value)
         return None
 
-    def render_value_as_text(row, column, options):
+    def render_value_as_text(row, column, options, preserve_numbers=False):
         """
         Given a queryet row and the column spec,
         we render the cell content
@@ -332,7 +333,15 @@ def render_queryset(*fields, queryset, mode, options):
         elif t == datetime.time:
             text = format_time(value)
         elif t == int:
+            if preserve_numbers:
+                text = value
+            else:
             text = '%d' % value
+        elif t in [decimal.Decimal, float]:
+            if preserve_numbers:
+                text = float(value)
+            else:
+                text = str(value)
         else:
             text = str(value)
 
@@ -491,7 +500,7 @@ def render_queryset(*fields, queryset, mode, options):
         headers = [c['title'] for c in columns]
         data = []
         for row in rows:
-            data.append([render_value_as_text(row, column, options) for column in columns])
+            data.append([render_value_as_text(row, column, options, preserve_numbers=True) for column in columns])
         return headers, data
 
     else:

@@ -3,6 +3,10 @@
 History
 =======
 
+v1.0.3
+------
+* render_value_as_text() optionally preserves numeric formats
+
 v1.0.2
 ------
 * use apply_autofit() in export_any_queryset()
