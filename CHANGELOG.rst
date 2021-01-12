@@ -3,6 +3,10 @@
 History
 =======
 
+v1.0.4
+------
+* fix syntax error due to wrong indentation
+
 v1.0.3
 ------
 * render_value_as_text() optionally preserves numeric formats

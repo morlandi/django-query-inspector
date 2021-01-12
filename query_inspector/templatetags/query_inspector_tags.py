@@ -336,7 +336,7 @@ def render_queryset(*fields, queryset, mode, options):
             if preserve_numbers:
                 text = value
             else:
-            text = '%d' % value
+                text = '%d' % value
         elif t in [decimal.Decimal, float]:
             if preserve_numbers:
                 text = float(value)
