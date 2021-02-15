@@ -3,6 +3,10 @@
 History
 =======
 
+v1.0.5
+------
+* "dump_local_data" management command now supports sqlite and Windows platform
+
 v1.0.4
 ------
 * fix syntax error due to wrong indentation

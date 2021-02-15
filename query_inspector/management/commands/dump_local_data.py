@@ -31,11 +31,13 @@ class Command(BaseCommand):
         parser.add_argument('--max-age', '-m', type=int, default=0, help='If > 0, remove backup files old "MAX_AGE days" or more')
         parser.add_argument('--no-gzip', action='store_false', dest='use_gzip', default=True, help='Do not compress result', )
         parser.add_argument('--legacy', action='store_true', default=False, help="use legacy Postgresql command syntax")
+        parser.add_argument('--windows', '-w', action='store_true', default=False, help="run on Windows")
 
     def handle(self, *args, **options):
         self.dry_run = options['dry_run']
         self.use_gzip = options['use_gzip']
         self.legacy = options['legacy']
+        self.windows = options['windows']
 
         prefix = datetime.datetime.now().strftime("%Y-%m-%d_%H.%M.%S_")
         db_name = settings.DATABASES['default']['NAME']
@@ -70,20 +72,38 @@ class Command(BaseCommand):
         Create a new db backup and save into backup folder
         """
         database = settings.DATABASES['default']
-        assert 'postgresql' in settings.DATABASES['default']['ENGINE'], "This command applies only to Postgresql"
 
-        filepath = os.path.join(target_folder, prefix + db_name + '.sql')
-        if self.use_gzip:
-            filepath += '.gz'
+        if 'postgresql' in database['ENGINE']:
 
-        # Prepare command to dump local db
-        command = 'pg_dump {options}"{db_name}"'.format(
-            options='--no-owner --dbname=' if not self.legacy else '',
-            db_name=db_name
-        )
-        if self.use_gzip:
-            command += " | gzip"
-        command += ' > "%s"' % filepath
+            filepath = os.path.join(target_folder, prefix + db_name + '.sql')
+            if self.use_gzip:
+                filepath += '.gz'
+
+            # Prepare command to dump local db
+            command = 'pg_dump {options}"{db_name}"'.format(
+                options='--no-owner --dbname=' if not self.legacy else '',
+                db_name=db_name
+            )
+            if self.use_gzip:
+                command += " | gzip"
+            command += ' > "%s"' % filepath
+
+        elif 'sqlite3' in database['ENGINE']:
+
+            source = os.path.abspath(db_name)
+            target = os.path.join(target_folder, prefix + os.path.basename(source))
+            command = "{copy} {source} {target}".format(
+                copy="copy" if self.windows else "cp",
+                source=source,
+                target=target,
+            )
+            if self.use_gzip:
+                command += " && gzip " + target
+
+        else:
+
+            raise Exception("This command applies only to Postgresql or Sqlite")
+
 
         self.run_command(command)
 
@@ -110,9 +130,16 @@ class Command(BaseCommand):
         Helper to remove backup files older than "max_age" days
         """
 
+        database = settings.DATABASES['default']
+        if 'postgresql' in database['ENGINE']:
+            filter_pattern = '_' + db_name + '.'
+        elif 'sqlite3' in database['ENGINE']:
+            filter_pattern = '_' + os.path.basename(db_name)
+        else:
+            raise Exception("This command applies only to Postgresql or Sqlite")
+
         # collect dated files from target folder
         files = []
-        filter_pattern = '_' + db_name + '.'
         filenames = [name for name in os.listdir(target_folder) if filter_pattern in name]
         for filename in filenames:
             file_obj = DatedFile(filename)
@@ -122,7 +149,11 @@ class Command(BaseCommand):
         # cleanup
         for file in files:
             print('Removing %s' % file)
-            self.run_command('rm ' + os.path.join(target_folder, file.filename))
+            command = "{remove} {file}".format(
+                remove="del" if self.windows else "rm",
+                file=os.path.join(target_folder, file.filename)
+            )
+            self.run_command(command)
 
 
 ################################################################################
