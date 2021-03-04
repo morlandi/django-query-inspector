@@ -501,6 +501,17 @@ def render_queryset(*fields, queryset, mode, options):
         data = []
         for row in rows:
             data.append([render_value_as_text(row, column, options, preserve_numbers=True) for column in columns])
+
+        if options.get('transpose', False):
+            headers2 = [headers[0], ] + [r[0] for r in data]
+            data2 = []
+            n = len(headers)
+            for j in range(1, n):
+                data2.append(
+                    [headers[j], ] + [r[j] for r in data]
+                )
+            return headers2, data2
+
         return headers, data
 
     else:
@@ -538,6 +549,13 @@ def render_queryset_as_table(*fields, queryset, options={}):
             - "enhanced"
             - "debug-only"
     """
+
+    transpose = options.get('transpose', False)
+    if transpose:
+        headers, data = render_queryset(*fields, mode="as_data", queryset=queryset, options=options)
+        queryset2 = [dict(zip(headers, row)) for row in data]
+        return render_queryset(*headers, mode="as_table", queryset=queryset2, options=options)
+
     return render_queryset(*fields, mode="as_table", queryset=queryset, options=options)
 
 

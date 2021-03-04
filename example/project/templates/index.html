@@ -62,9 +62,18 @@
 
     <br />
     <h3>render_queryset_as_table</h3>
-
     <table class="simpletable smarttable">
         {% render_queryset_as_table "id" "name|Track" "album|Album" queryset=tracks %}
+    </table>
+
+    <h3>render_queryset_as_table (2)</h3>
+    <table class="simpletable smarttable">
+        {{ html_table_tracks }}
+    </table>
+
+    <h3>render_queryset_as_table_transposed</h3>
+    <table class="simpletable smarttable">
+        {{ html_table_tracks_transposed }}
     </table>
 
     <br />
@@ -89,5 +98,13 @@
         {% endfor %}
     </table>
 
+    <br />
+    <h3>render_queryset_as_data (transposed)</h3>
+    <table class="simpletable">
+        <tr><td>headers</td><td>{{transposed.0}}</td></tr>
+        {% for row in transposed.1 %}
+            <tr><td>row</td><td>{{row}}</td></tr>
+        {% endfor %}
+    </table>
 {% endblock content %}
 
