@@ -22,8 +22,8 @@ def index(request):
     qsdump('*', queryset=tracks, max_rows=10)
 
     fields = [
+        "name|My Track",
         "id",
-        "name|Track",
         "album|Album|enhanced",
         #"album__id|Album id",
     ]
