@@ -25,7 +25,7 @@ def index(request):
         "name|My Track",
         "id",
         "album|Album|enhanced",
-        #"album__id|Album id",
+        "album__id|Album id",
     ]
 
     html_table_tracks = render_queryset_as_table(

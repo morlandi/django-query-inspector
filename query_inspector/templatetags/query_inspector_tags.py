@@ -294,11 +294,41 @@ def render_queryset(*fields, queryset, mode, options):
             css_classes += field['classes'].split(' ')
         return css_classes
 
+    def get_foreign_value(obj, column_name):
+        """
+        Borrowed from django-ajax-datatable
+        """
+        current_value = obj
+        path_items = column_name.split('__')
+        path_item_count = len(path_items)
+        for current_path_item in path_items:
+            try:
+                current_value = getattr(current_value, current_path_item)
+            except:
+                # TODO: check this
+                try:
+                    current_value = [
+                        getattr(current_value, current_path_item)
+                        for current_value in current_value.get_queryset()
+                    ]
+                except:
+                    try:
+                        current_value = [getattr(f, current_path_item) for f in current_value]
+                    except:
+                        current_value = None
+
+            if current_value is None:
+                return None
+        return current_value
+
     def get_cell_value(row, column):
         if type(row) == dict:
             value = row.get(column['name'])
         else:
-            value = getattr(row, column['name'])
+            if '__' not in column['name']:
+                value = getattr(row, column['name'])
+            else:
+                value = get_foreign_value(row, column['name'])
         return value
 
     def get_cell_value_as_numeric(row, column):
@@ -315,10 +345,12 @@ def render_queryset(*fields, queryset, mode, options):
         Given a queryet row and the column spec,
         we render the cell content
         """
-        if type(row) == dict:
-            value = row.get(column['name'])
-        else:
-            value = getattr(row, column['name'])
+        # if type(row) == dict:
+        #     value = row.get(column['name'])
+        # else:
+        #     value = getattr(row, column['name'])
+        value = get_cell_value(row, column)
+
         #t = column.get('type', type(value))
         t = type(value)
 
@@ -355,10 +387,11 @@ def render_queryset(*fields, queryset, mode, options):
         """
         css_classes = get_field_css_classes(column)
 
-        if type(row) == dict:
-            value = row.get(column['name'])
-        else:
-            value = getattr(row, column['name'])
+        # if type(row) == dict:
+        #     value = row.get(column['name'])
+        # else:
+        #     value = getattr(row, column['name'])
+        value = get_cell_value(row, column)
 
         t = column.get('type', type(value))
         text = render_value_as_text(row, column, options)
