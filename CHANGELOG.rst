@@ -3,6 +3,13 @@
 History
 =======
 
+v1.0.6
+------
+
+* optionally Transpose rendered tables
+* slugify "field-..." class in rendered HTML tables
+* support "field1__field2" syntax to span relationships
+
 v1.0.5
 ------
 * "dump_local_data" management command now supports sqlite and Windows platform
