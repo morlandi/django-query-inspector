@@ -315,6 +315,7 @@ options:
         + https://docs.djangoproject.com/en/dev/ref/settings/#date-format
         + https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date
     - add_totals: computes column totals and append results as bottom row
+    - transpose: flag to transpose the resulting table
 
 fields: a list of field specifiers, espressed as:
     - "fieldname", or
@@ -373,6 +374,25 @@ can be reproduced as follows:
         for row in rows:
             print('|'.join(row))
         print("")
+
+Transposing resulting table
+---------------------------
+
+Occasionally, you might need to switch columns and rows in the resulting table;
+this can be obtained by adding a `'transpose': True` to the `options`.
+
+Currently available for `render_queryset_as_data()` and `render_queryset_as_table()`.
+
+Alternatively, you can transpose a queryset with `django-pandas` as follows:
+
+.. code:: python
+
+    import pandas as pd
+    from django_pandas.io import read_frame
+
+    df = read_frame(queryset)
+    table_html = df.transpose().to_html()
+    print(table_html)
 
 Download the queryset as CSV or Excel file (xlsx)
 -------------------------------------------------
