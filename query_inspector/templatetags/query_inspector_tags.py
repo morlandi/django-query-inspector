@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.utils import formats
+from django.utils.text import slugify
 from django.db import models
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core import serializers
@@ -251,7 +252,7 @@ def render_queryset(*fields, queryset, mode, options):
 
     def build_columns(*fields):
         """
-        From the sequence of supplied paraameters, we build a list columns as follows:
+        From the sequence of supplied parameters, we build a list columns as follows:
             [{
                 'name': name1,
                 'title': title1,
@@ -288,7 +289,7 @@ def render_queryset(*fields, queryset, mode, options):
         return columns
 
     def get_field_css_classes(field):
-        css_classes = ['field-' + field['name'], ]
+        css_classes = ['field-' + slugify(field['name']), ]
         if field['classes']:
             css_classes += field['classes'].split(' ')
         return css_classes
