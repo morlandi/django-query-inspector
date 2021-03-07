@@ -3,6 +3,10 @@
 History
 =======
 
+v1.0.7
+------
+* QueryCountMiddleware can be used as standalone
+
 v1.0.6
 ------
 

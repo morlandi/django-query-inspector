@@ -1,5 +1,5 @@
 import logging
-from .trace import format_query
+from .middleware import format_query
 
 
 class QueryLogHandler(logging.StreamHandler):

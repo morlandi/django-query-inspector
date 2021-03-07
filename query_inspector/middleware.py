@@ -8,13 +8,58 @@ from django.conf import settings
 from django.db import connections
 from django.utils import termcolors
 
-from . app_settings import ACTUAL_QUERYCOUNT_SETTINGS
-from .trace import format_query
-
 try:
     from django.utils.deprecation import MiddlewareMixin
 except ImportError:
     MiddlewareMixin = object
+
+
+ACTUAL_QUERYCOUNT_SETTINGS = getattr(settings, 'QUERYCOUNT', {
+    'IGNORE_ALL_REQUESTS': False,
+    'IGNORE_REQUEST_PATTERNS': [],
+    'IGNORE_SQL_PATTERNS': [],
+    'THRESHOLDS': {
+        'MEDIUM': 50,
+        'HIGH': 200,
+        'MIN_TIME_TO_LOG': 0,
+        'MIN_QUERY_COUNT_TO_LOG': 0
+    },
+    'DISPLAY_ALL': True,
+    'DISPLAY_PRETTIFIED': True,
+    'COLOR_FORMATTER_STYLE': 'monokai',
+    'RESPONSE_HEADER': 'X-DjangoQueryCount-Count',
+    'DISPLAY_DUPLICATES': 0,
+})
+
+
+def format_query(sql):
+
+    # Check if Pygments is available for coloring
+    try:
+        import pygments
+        from pygments.lexers import SqlLexer
+        from pygments.formatters import TerminalTrueColorFormatter
+    except ImportError:
+        pygments = None
+    # Check if sqlparse is available for indentation
+    try:
+        import sqlparse
+    except ImportError:
+        sqlparse = None
+    # Remove leading and trailing whitespaces
+    if sqlparse:
+        # Indent the SQL query
+        sql = sqlparse.format(sql, reindent=True)
+    if pygments:
+        # Highlight the SQL query
+        sql = pygments.highlight(
+            sql,
+            SqlLexer(),
+            TerminalTrueColorFormatter(style=ACTUAL_QUERYCOUNT_SETTINGS['COLOR_FORMATTER_STYLE'])
+            #TerminalTrueColorFormatter()
+        )
+
+    return sql
 
 
 class QueryCountMiddleware(MiddlewareMixin):

@@ -4,7 +4,6 @@ from functools import partial
 from django.db.models.query import QuerySet
 from .templatetags.query_inspector_tags import render_queryset_as_text
 from .templatetags.query_inspector_tags import render_queryset_as_data
-from . app_settings import ACTUAL_QUERYCOUNT_SETTINGS
 
 # Check if sqlparse is available for indentation
 try:
@@ -148,35 +147,4 @@ def qsdump(*fields, queryset, max_rows=None, render_with_tabulate=True, title=""
     num_records = queryset.count() if is_queryset else len(queryset)
     summary = '# records: %d/%d' % (len(rows), num_records)
     trace(summary, color='white', attrs=['reverse', ])
-
-
-def format_query(sql):
-
-    # Check if Pygments is available for coloring
-    try:
-        import pygments
-        from pygments.lexers import SqlLexer
-        from pygments.formatters import TerminalTrueColorFormatter
-    except ImportError:
-        pygments = None
-    # Check if sqlparse is available for indentation
-    try:
-        import sqlparse
-    except ImportError:
-        sqlparse = None
-    # Remove leading and trailing whitespaces
-    if sqlparse:
-        # Indent the SQL query
-        sql = sqlparse.format(sql, reindent=True)
-    if pygments:
-        # Highlight the SQL query
-        sql = pygments.highlight(
-            sql,
-            SqlLexer(),
-            TerminalTrueColorFormatter(style=ACTUAL_QUERYCOUNT_SETTINGS['COLOR_FORMATTER_STYLE'])
-            #TerminalTrueColorFormatter()
-        )
-
-    return sql
-
 
