@@ -3,6 +3,10 @@
 History
 =======
 
+v1.0.8
+------
+* [fix] remove division by zero when computing average for and empty list of rows
+
 v1.0.7
 ------
 * QueryCountMiddleware can be used as standalone

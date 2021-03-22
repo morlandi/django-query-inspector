@@ -458,7 +458,7 @@ def render_queryset(*fields, queryset, mode, options):
     # "percentage" columns: replace sum with average
     for index, column in enumerate(columns):
         if 'percentage' in column['classes']:
-            totals[index] = int(float(totals[index]) / len(rows))
+            totals[index] = int(float(totals[index]) / len(rows)) if len(rows) else ''
 
     # Render the rows as table
     if mode == "as_table":
