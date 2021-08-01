@@ -1,5 +1,6 @@
 import pprint
 import json
+import uuid
 from functools import partial
 from django.db.models.query import QuerySet
 from .templatetags.query_inspector_tags import render_queryset_as_text
@@ -52,15 +53,25 @@ def trace(message, color='yellow', on_color=None, attrs=None, prompt='', prettif
         print(text)
 
 
+def prettyprint_query(query, params=None, colorize=True, prettify=True, reindent=True):
 
-def prettyprint_query(query, colorize=True, prettify=True):
+    def _str_query(sql, params):
 
-    def _str_query(sql):
+        def escape(v):
+            if type(v) in [uuid.UUID, str, ]:
+                return "'%s'" % v
+            return v
+
+        if type(params) == dict:
+            params_ex = {
+                k: escape(v) for k, v in params.items()
+            }
+            sql = sql % params_ex
 
         # Borrowed by morlandi from sant527
         # See: https://github.com/bradmontgomery/django-querycount/issues/22
         if prettify:
-            sql = sqlparse.format(sql, reindent=True)
+            sql = sqlparse.format(sql, reindent=reindent)
 
         if colorize and pygments:
             # Highlight the SQL query
@@ -73,12 +84,12 @@ def prettyprint_query(query, colorize=True, prettify=True):
 
         return sql
 
-    sql = _str_query(query)
+    sql = _str_query(query, params)
     print(sql)
 
 
-def prettyprint_queryset(qs, colorize=True, prettify=True):
-    prettyprint_query(str(qs.query), colorize=colorize, prettify=prettify)
+def prettyprint_queryset(qs, colorize=True, prettify=True, reindent=True):
+    prettyprint_query(str(qs.query), colorize=colorize, prettify=prettify, reindent=reindent)
 
 
 def trace_func(fn):

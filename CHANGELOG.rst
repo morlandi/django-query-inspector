@@ -3,6 +3,11 @@
 History
 =======
 
+v1.0.9
+------
+* added "params" and "reindend" parameters to prettyprint_query()
+* added "reindend" to prettyprint_queryset()
+
 v1.0.8
 ------
 * [fix] remove division by zero when computing average for and empty list of rows

@@ -225,10 +225,10 @@ def trace(message, color='yellow', on_color=None, attrs=None, prompt='', prettif
 
     Color support provided by: https://pypi.org/project/termcolor/
 
-def prettyprint_query(query, colorize=True, prettify=True)
+def prettyprint_query(query, params=None, colorize=True, prettify=True, reindent=True)
     Display the specified SQL statement
 
-def prettyprint_queryset(qs, colorize=True, prettify=True)
+def prettyprint_queryset(qs, colorize=True, prettify=True, reindent=True)
     Display the SQL statement implied by the given queryset
 
 def trace_func(fn):
