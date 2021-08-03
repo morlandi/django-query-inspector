@@ -1,0 +1,20 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .form-row.field-sql textarea {
+            height: 500px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+        <a href="{% url 'admin:query_inspector_query_preview' object_id %}">{% trans 'Preview' %}</a>
+    </li>
+{% endblock %}

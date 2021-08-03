@@ -58,7 +58,11 @@ def format_datetime(dt, include_time=True, include_seconds=False, exclude_date=F
         return ''
 
     if isinstance(dt, datetime.datetime):
-        dt = timezone.localtime(dt)
+        if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
+            # naive datetime
+            pass
+        else:
+            dt = timezone.localtime(dt)
     else:
         assert isinstance(dt, datetime.date)
         include_time = False

@@ -1,0 +1,74 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static i18n admin_modify admin_urls query_inspector_tags %}
+
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo;
+    <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo;
+    {% if has_view_permission %}
+        <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    {% else %}
+        {{ opts.verbose_name_plural|capfirst }}
+    {% endif %}
+    &rsaquo;
+    {% if add %}
+        {% blocktranslate with name=opts.verbose_name %}Add {{ name }}{% endblocktranslate %}
+    {% else %}
+    {% if has_change_permission %}
+        <a href="{% url opts|admin_urlname:'change' original.id %}">{{ original|truncatewords:"18" }}</a>
+    {% else %}
+        {{ original|truncatewords:"18" }}
+    {% endif %}
+    {% endif %}
+    &rsaquo;
+    {% translate 'Preview' %}
+</div>
+{% endblock %}
+{% endif %}
+
+
+{% block content_title %}
+    <h1>{% blocktranslate %}Preview{% endblocktranslate %} {{ original }}</h1>
+{% endblock content_title %}
+
+
+{% block content %}
+
+<form action="{{ request.path }}" method="POST">
+    {% csrf_token %}
+
+    <span style="float: right">
+        <h3>{% translate 'Limit' %}</h3>
+        <input type="text" id="sql_limit" name="sql_limit" value="{{ sql_limit }}">
+    </span>
+    {% if params %}
+        <h3>{% translate 'Query parameters' %}</h3>
+        <div class="query-parameters">
+            {% for name, value in params %}
+                <label for="qp{{ forloop.counter }}">{{ name }}</label>
+                <input type="text" id="qp{{ forloop.counter }}" name="{{ name }}" value="{{ value }}">
+            {% endfor %}
+        </div>
+    {% endif %}
+    <input
+        class="btn"
+        type="submit"
+        value="{% blocktranslate %}Run query{% endblocktranslate %}"
+    />
+</form>
+
+    <b>{% translate 'Record count' %}: {{recordset|length}}</b>
+    {% translate 'Elapsed time' %}: {{elapsed}} <span> [s]</span>
+    <table class="simpletable smarttable">
+        {% render_queryset_as_table "*" queryset=recordset %}
+    </table>
+    <br />
+    <br />
+
+    {# <p><pre>{{ original.sql }}</pre></p> #}
+{% endblock content %}
+

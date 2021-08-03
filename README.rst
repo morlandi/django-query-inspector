@@ -109,6 +109,47 @@ Default settings (to be overridden in projects' settings)::
         'DISPLAY_DUPLICATES': 0,
     }
 
+Execute SQL statements
+----------------------
+
+It is possible to execute a SQL statements against the default db connection using the following helper:
+
+.. code:: python
+
+    query_inspector.sql.perform_query(sql, params, log=False, validate=True)
+
+The resulting recordset will be returned as a list of dictionaries.
+
+Or, you can save it in the Django admin (model query_inspector.Query),
+then click the "Preview" button.
+
+If the query contains named parameters (such as `%(name)s`), a form will be displayed to collect the
+actual values before execution.
+
+Inspired by:
+
+- `django-sql-dashboard <https://github.com/simonw/django-sql-dashboard>`_
+- `django-sql-explorer <https://github.com/groveco/django-sql-explorer>`_
+
+.. figure:: screenshots/query_preview.png
+
+    query_preview
+
+App settings
+------------
+
+::
+
+    QUERY_INSPECTOR_QUERY_SUPERUSER_ONLY = True
+    QUERY_INSPECTOR_QUERY_DEFAULT_LIMIT = 0
+    QUERY_INSPECTOR_SQL_BLACKLIST = (
+        'ALTER',
+        'RENAME ',
+        ...
+    QUERY_INSPECTOR_SQL_WHITELIST = (
+        'CREATED',
+        'UPDATED',
+        ...
 
 @query_debugger
 ---------------
