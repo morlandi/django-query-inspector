@@ -3,6 +3,10 @@
 History
 =======
 
+v1.1.3
+------
+* fix preview styles again
+
 v1.1.2
 ------
 * fix styles
