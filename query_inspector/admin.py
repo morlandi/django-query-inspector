@@ -66,23 +66,25 @@ class QueryAdmin(admin.ModelAdmin):
             sql_limit = int(sql_limit)
         except:
             sql_limit = 0
-        trace(sql_limit)
 
-        try:
-            start = time.perf_counter()
+        recordset = []
+        elapsed = None
+        if request.method == 'POST':
+            try:
+                start = time.perf_counter()
 
-            sql = obj.sql
-            if sql_limit > 0:
-                sql += ' limit %d' % sql_limit
+                sql = obj.sql
+                if sql_limit > 0:
+                    sql += ' limit %d' % sql_limit
 
-            recordset = perform_query(sql, params, log=True, validate=True)
+                recordset = perform_query(sql, params, log=True, validate=True)
 
-            end = time.perf_counter()
-            elapsed = '%.2f' % (end - start)
-        except Exception as e:
-            recordset = []
-            elapsed = ''
-            messages.error(request, str(e))
+                end = time.perf_counter()
+                elapsed = '%.2f' % (end - start)
+            except Exception as e:
+                recordset = []
+                elapsed = ''
+                messages.error(request, str(e))
 
         return render(
             request,

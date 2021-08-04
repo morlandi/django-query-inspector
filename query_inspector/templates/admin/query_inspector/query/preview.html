@@ -61,11 +61,14 @@
     />
 </form>
 
-    <b>{% translate 'Record count' %}: {{recordset|length}}</b>
-    {% translate 'Elapsed time' %}: {{elapsed}} <span> [s]</span>
-    <table class="simpletable smarttable">
-        {% render_queryset_as_table "*" queryset=recordset %}
-    </table>
+    {% if elapsed != None %}
+        <br />
+        <b>{% translate 'Record count' %}: {{recordset|length}}</b>
+        {% translate 'Elapsed time' %}: {{elapsed}} <span> [s]</span>
+        <table class="simpletable smarttable">
+            {% render_queryset_as_table "*" queryset=recordset %}
+        </table>
+    {% endif %}
     <br />
     <br />
 
