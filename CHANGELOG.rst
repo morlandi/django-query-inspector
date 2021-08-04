@@ -3,6 +3,10 @@
 History
 =======
 
+v1.1.1
+------
+* Query preview: add horizontal scrolling to results table
+
 v1.1.0
 ------
 * SQL query preview from admin

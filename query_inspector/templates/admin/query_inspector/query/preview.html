@@ -2,6 +2,19 @@
 {% load i18n static i18n admin_modify admin_urls query_inspector_tags %}
 
 
+{% block bodyclass %}app-query_inspector model-query preview{% endblock %}
+
+{% block extrastyle %}
+    <style>
+        #recordset-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    </style>
+{% endblock %}
+
+
 {% if not is_popup %}
 {% block breadcrumbs %}
 <div class="breadcrumbs">
@@ -65,7 +78,7 @@
         <br />
         <b>{% translate 'Record count' %}: {{recordset|length}}</b>
         {% translate 'Elapsed time' %}: {{elapsed}} <span> [s]</span>
-        <table class="simpletable smarttable">
+        <table id="recordset-table" class="simpletable smarttable">
             {% render_queryset_as_table "*" queryset=recordset %}
         </table>
     {% endif %}
