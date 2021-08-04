@@ -3,6 +3,11 @@
 History
 =======
 
+v1.1.0
+------
+* SQL query preview from admin
+* fix format_datetime() for naive datetimes
+
 v1.0.9
 ------
 * added "params" and "reindend" parameters to prettyprint_query()
