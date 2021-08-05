@@ -3,6 +3,10 @@
 History
 =======
 
+v1.1.5
+------
+* Fix readme
+
 v1.1.4
 ------
 * qsdump2() helper added
