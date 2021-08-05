@@ -18,6 +18,9 @@
 {% block object-tools-items %}
     {{ block.super }}
     <li>
+        <a href="{% url 'admin:query_inspector_query_duplicate' object_id %}">{% trans 'Duplicate' %}</a>
+    </li>
+    <li>
         <a href="{% url 'admin:query_inspector_query_preview' object_id %}">{% trans 'Preview' %}</a>
     </li>
 {% endblock %}

@@ -1,8 +1,6 @@
 import re
-#from django.conf import settings
 from django.db import models
-# from django.urls import reverse
-# from django.utils import timezone
+from django.core.exceptions import PermissionDenied
 from django.utils.translation import ugettext_lazy as _
 from .app_settings import QUERY_SUPERUSER_ONLY
 
@@ -45,3 +43,35 @@ class Query(models.Model):
         if "%" in without_double_percents:
             raise ValueError(r"Found a single % character")
         return params
+
+    def clone(self, request=None):
+
+        def new_slug(slug):
+            # split name part and trailing version number;
+            # i.e.:  "sample2" --> ['sample', 2]
+            #        "sample" --> ['sample', 0]
+            groups = re.match('.*?([0-9]+)$', slug)
+            if groups is None:
+                radix = slug
+                version = 0
+            else:
+                radix = slug[0:-len(groups[1])]
+                version = int(groups[1])
+
+            # Increment version until we find a suitable name
+            while True:
+                version += 1
+                new_text = radix + str(version)
+                if not Query.objects.filter(slug=new_text).exists():
+                    return new_text
+
+        info = self._meta.app_label, self._meta.model_name
+        required_permission = '%s.add_%s' % info
+        if request and not request.user.has_perm(required_permission):
+            raise PermissionDenied
+        obj = self._meta.model.objects.get(pk=self.pk)
+        obj.pk = None
+        obj.slug = new_slug(obj.slug)
+        obj.title = obj.slug
+        obj.save()
+        return obj

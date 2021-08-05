@@ -1,4 +1,7 @@
 import time
+import traceback
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.contrib import admin
 from django.conf import settings
 from urllib.parse import urlencode
@@ -34,8 +37,24 @@ class QueryAdmin(admin.ModelAdmin):
         info = self.model._meta.app_label, self.model._meta.model_name
         my_urls = [
             path('<int:object_id>/preview/', self.admin_site.admin_view(self.preview), name='%s_%s_preview' % info),
+            path('<int:object_id>/duplicate/', self.admin_site.admin_view(self.duplicate), name='%s_%s_duplicate' % info),
         ]
         return my_urls + urls
+
+    def duplicate(self, request, object_id):
+        info = self.model._meta.app_label, self.model._meta.model_name
+        viewname = 'admin:%s_%s_change' % info
+        try:
+            obj = self.model.objects.get(id=object_id)
+            new_obj = obj.clone(request)
+            messages.info(request, _('Query has been duplicated'))
+            next = reverse(viewname, args=(new_obj.pk, ))
+        except Exception as e:
+            messages.error(request, 'ERROR: ' + (str(e) or repr(e)))
+            if settings.DEBUG:
+                messages.warning(request, traceback.format_exc())
+            next = reverse(viewname, args=(obj.pk, ))
+        return HttpResponseRedirect(next)
 
     def preview(self, request, object_id):
 
