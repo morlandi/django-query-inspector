@@ -21,9 +21,17 @@ from .sql import perform_query
 @admin.register(Query)
 class QueryAdmin(admin.ModelAdmin):
 
-    list_display = ("slug", "title", )
+    list_display = ("slug", "title", "list_parameters")
     prepopulated_fields = {"slug": ("title",)}
     save_on_top = True
+
+    def list_parameters(self, obj):
+        try:
+            text = obj.extract_named_parameters()
+        except Exception as e:
+            text = _("ERROR") + ': ' + str(e)
+        return text
+    list_parameters.short_description = _('Parameters')
 
     def has_change_permission(self, request, obj=None):
         if obj is None:
