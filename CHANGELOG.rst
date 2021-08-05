@@ -3,6 +3,11 @@
 History
 =======
 
+v1.1.4
+------
+* qsdump2() helper added
+* Query: persist parameters and duplicate
+
 v1.1.3
 ------
 * fix preview styles again
