@@ -9,3 +9,4 @@ from .trace import trace_func
 from .trace import prettyprint_query
 from .trace import prettyprint_queryset
 from .trace import qsdump
+from .trace import qsdump2
