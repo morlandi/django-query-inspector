@@ -1,6 +1,25 @@
 {% extends "admin/base_site.html" %}
 {% load i18n static i18n admin_modify admin_urls query_inspector_tags %}
 
+{% block bodyclass %}{{ block.super}} app-query_inspector model-query preview{% endblock bodyclass %}
+
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        /* horizontal scroll in results table */
+        #recordset-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .field-sql textarea {
+            font-family: monospace;
+        }
+    </style>
+{% endblock %}
+
 
 {% if not is_popup %}
 {% block breadcrumbs %}
@@ -37,7 +56,6 @@
 
 
 {% block content %}
-
 <form action="{{ request.path }}" method="POST">
     {% csrf_token %}
 
@@ -65,8 +83,7 @@
         <br />
         <b>{% translate 'Record count' %}: {{recordset|length}}</b>
         {% translate 'Elapsed time' %}: {{elapsed}} <span> [s]</span>
-        <table id="recordset-table" class="simpletable smarttable"
-            style="display: block; overflow-x: auto; white-space: nowrap;">
+        <table id="recordset-table" class="simpletable smarttable">
             {% render_queryset_as_table "*" queryset=recordset %}
         </table>
     {% endif %}

@@ -20,6 +20,7 @@ class QueryAdmin(admin.ModelAdmin):
 
     list_display = ("slug", "title", )
     prepopulated_fields = {"slug": ("title",)}
+    save_on_top = True
 
     def has_change_permission(self, request, obj=None):
         if obj is None:
@@ -59,6 +60,12 @@ class QueryAdmin(admin.ModelAdmin):
             parameter: request.POST.get(parameter, request.GET.get(parameter, ""))
             for parameter in parameters
         }
+
+        # Load default parameters
+        if request.method =="GET":
+            for key, value in params.items():
+                if not value:
+                    params[key] = obj.default_parameters.get(key, '')
         # extra_qs = "&{}".format(urlencode(params)) if params else ""
 
         sql_limit = request.POST.get('sql_limit', request.GET.get('sql_limit', QUERY_DEFAULT_LIMIT))
@@ -78,6 +85,10 @@ class QueryAdmin(admin.ModelAdmin):
                     sql += ' limit %d' % sql_limit
 
                 recordset = perform_query(sql, params, log=True, validate=True)
+
+                # Save default parameters
+                obj.default_parameters = params
+                obj.save(update_fields=['default_parameters', ])
 
                 end = time.perf_counter()
                 elapsed = '%.2f' % (end - start)

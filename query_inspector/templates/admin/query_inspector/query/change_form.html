@@ -5,8 +5,11 @@
 {% block extrastyle %}
     {{ block.super }}
     <style>
-        .form-row.field-sql textarea {
+        .form-row.field-sql textarea.vLargeTextField {
             height: 500px;
+            font-family: monospace;
+            font-size: 11px;
+            width: 800px;
         }
     </style>
 {% endblock %}

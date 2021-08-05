@@ -14,6 +14,7 @@ class Query(models.Model):
     title = models.CharField(blank=True, max_length=128)
     slug = models.SlugField(unique=True)
     sql = models.TextField(null=False, blank=True)
+    default_parameters = models.JSONField(null=False, default=dict)
     notes = models.TextField(null=False, blank=True)
 
     class Meta:
