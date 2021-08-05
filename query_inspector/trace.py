@@ -159,3 +159,23 @@ def qsdump(*fields, queryset, max_rows=None, render_with_tabulate=True, title=""
     summary = '# records: %d/%d' % (len(rows), num_records)
     trace(summary, color='white', attrs=['reverse', ])
 
+
+def qsdump2(queryset, include=[], exclude=[], max_rows=None, render_with_tabulate=True, title=""):
+
+    if isinstance(queryset, QuerySet):
+        all_fields = [f.name for f in queryset.model._meta.fields]
+    elif len(queryset)>0 and isinstance(queryset[0], dict):
+        all_fields = list(queryset[0].keys())
+    else:
+        all_fields = []
+
+    assert not (include and exclude)
+
+    fields = all_fields
+    if include:
+        fields = [f for f in include if f in all_fields]
+    elif exclude:
+        fields = [f for f in all_fields if f not in exclude]
+
+    trace(str(fields), prompt='fields')
+    qsdump(*fields, queryset=queryset, max_rows=max_rows, render_with_tabulate=render_with_tabulate, title=title)

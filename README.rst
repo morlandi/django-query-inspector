@@ -275,8 +275,11 @@ def prettyprint_queryset(qs, colorize=True, prettify=True, reindent=True)
 def trace_func(fn):
     Decorator to detect: function call, input parameters and return value
 
-def qsdump( * fields, queryset, max_rows=None)
+def qsdump(*fields, queryset, max_rows=None, render_with_tabulate=True, title="")
     See below
+
+def qsdump2(queryset, include, exclude, max_rows=None, render_with_tabulate=True, title="")
+    Calls qsdump() building the field list from either "include" or "exclude" parameter
 
 Results:
 
