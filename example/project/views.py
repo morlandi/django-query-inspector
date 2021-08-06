@@ -2,13 +2,13 @@ from django.shortcuts import render
 from django.utils import timezone
 from backend.models import Track
 from query_inspector import query_debugger
-from query_inspector import qsdump
 from query_inspector import trace_func
 from query_inspector import prettyprint_queryset
 from query_inspector.views import export_any_queryset
 from query_inspector.views import export_any_dataset
 from query_inspector.templatetags.query_inspector_tags import render_queryset_as_table
 from query_inspector.templatetags.query_inspector_tags import render_queryset_as_data
+from query_inspector import qsdump, qsdump2
 
 
 @query_debugger
@@ -19,7 +19,8 @@ def index(request):
     tracks = Track.objects.select_related('album', 'album__artist', )[:10]
 
     #prettyprint_queryset(tracks, prettify=True, colorize=True)
-    qsdump('*', queryset=tracks, max_rows=10)
+    qsdump2(queryset=tracks, exclude=['created', 'created_by', 'updated', 'updated_by', ], max_rows=10)
+    qsdump2(queryset=[], exclude=['created', 'created_by', 'updated', 'updated_by', ], max_rows=10)
 
     fields = [
         "name|My Track",

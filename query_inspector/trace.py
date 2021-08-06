@@ -178,4 +178,6 @@ def qsdump2(queryset, include=[], exclude=[], max_rows=None, render_with_tabulat
         fields = [f for f in all_fields if f not in exclude]
 
     trace(str(fields), prompt='fields')
+    if len(fields) <= 0:
+        fields = ['*', ]
     qsdump(*fields, queryset=queryset, max_rows=max_rows, render_with_tabulate=render_with_tabulate, title=title)
