@@ -3,6 +3,10 @@
 History
 =======
 
+v1.1.6
+------
+* Fix: remove duplicates from extract_named_parameters()
+
 v1.1.5
 ------
 * Fix readme

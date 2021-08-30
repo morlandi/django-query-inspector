@@ -42,6 +42,10 @@ class Query(models.Model):
         without_double_percents = without_params.replace("%%", "")
         if "%" in without_double_percents:
             raise ValueError(r"Found a single % character")
+
+        # Remove duplicates
+        params = list(set(params))
+
         return params
 
     def clone(self, request=None):
