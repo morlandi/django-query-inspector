@@ -2,6 +2,7 @@ from django.conf import settings
 
 QUERY_SUPERUSER_ONLY = getattr(settings, 'QUERY_INSPECTOR_QUERY_SUPERUSER_ONLY', True)
 QUERY_DEFAULT_LIMIT = getattr(settings, 'QUERY_INSPECTOR_QUERY_DEFAULT_LIMIT', '0')
+QUERY_STOCK_QUERIES = getattr(settings, 'QUERY_INSPECTOR_QUERY_STOCK_QUERIES', [])
 SQL_BLACKLIST = getattr(
     settings, 'QUERY_INSPECTOR_SQL_BLACKLIST',
     (

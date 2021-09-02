@@ -3,6 +3,10 @@
 History
 =======
 
+v1.1.7
+------
+* Stock queries support
+
 v1.1.6
 ------
 * Fix: remove duplicates from extract_named_parameters()

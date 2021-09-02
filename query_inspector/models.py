@@ -14,11 +14,13 @@ class Query(models.Model):
     sql = models.TextField(null=False, blank=True)
     default_parameters = models.JSONField(null=False, default=dict, blank=True)
     notes = models.TextField(null=False, blank=True)
+    stock = models.BooleanField(null=False, default=False, editable=False)
 
     class Meta:
         abstract = False
         verbose_name = _("Query")
         verbose_name_plural = _("Queries")
+        ordering = ('-stock', 'slug', )
 
     def __str__(self):
         return self.title or self.slug
@@ -77,5 +79,6 @@ class Query(models.Model):
         obj.pk = None
         obj.slug = new_slug(obj.slug)
         obj.title = obj.slug
+        obj.stock = False
         obj.save()
         return obj

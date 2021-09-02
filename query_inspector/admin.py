@@ -15,15 +15,21 @@ from query_inspector import query_debugger, trace
 from .app_settings import QUERY_DEFAULT_LIMIT
 from .models import Query
 from .sql import perform_query
-
+from .sql import reload_stock_queries
 
 
 @admin.register(Query)
 class QueryAdmin(admin.ModelAdmin):
 
-    list_display = ("slug", "title", "list_parameters")
-    prepopulated_fields = {"slug": ("title",)}
+    list_display = ("slug", 'stock', "title", "list_parameters", )
+    list_filter = ('stock', )
     save_on_top = True
+
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'slug', 'sql', 'default_parameters', 'notes', )
+        }),
+    )
 
     def list_parameters(self, obj):
         try:
@@ -36,18 +42,48 @@ class QueryAdmin(admin.ModelAdmin):
     def has_change_permission(self, request, obj=None):
         if obj is None:
             return True
+        if obj.stock:
+            return False
         if request.user.is_superuser:
             return True
         return False
+
+    def has_delete_permission(self, request, obj=None):
+        if obj is not None and obj.stock:
+            return False
+        return True
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj is not None and obj.stock:
+            return ['sql', 'slug', 'title', 'notes', 'default_parameters', ]
+        return []
+
+    def get_prepopulated_fields(self, request, obj=None):
+        if obj is not None and obj.stock:
+            return {}
+        return {"slug": ("title",)}
 
     def get_urls(self):
         urls = super().get_urls()
         info = self.model._meta.app_label, self.model._meta.model_name
         my_urls = [
+            path('reload_stock_queries/', self.admin_site.admin_view(self.reload_stock_queries), name='%s_%s_reload_stock_queries' % info),
             path('<int:object_id>/preview/', self.admin_site.admin_view(self.preview), name='%s_%s_preview' % info),
             path('<int:object_id>/duplicate/', self.admin_site.admin_view(self.duplicate), name='%s_%s_duplicate' % info),
         ]
         return my_urls + urls
+
+    def reload_stock_queries(self, request):
+        info = self.model._meta.app_label, self.model._meta.model_name
+        next = reverse('admin:%s_%s_changelist' % info, args=())
+        try:
+            reload_stock_queries()
+            messages.info(request, _('Stock queries reloaded'))
+        except Exception as e:
+            messages.error(request, 'ERROR: ' + (str(e) or repr(e)))
+            if settings.DEBUG:
+                messages.warning(request, traceback.format_exc())
+        return HttpResponseRedirect(next)
 
     def duplicate(self, request, object_id):
         info = self.model._meta.app_label, self.model._meta.model_name

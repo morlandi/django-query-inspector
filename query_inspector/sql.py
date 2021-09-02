@@ -41,6 +41,28 @@ def passes_blacklist(sql):
     return not any(fails), fails
 
 
+def reload_stock_queries():
+
+    from .models import Query
+
+    # Cleanup
+    slugs = [row['slug'] for row in app_settings.QUERY_STOCK_QUERIES]
+    Query.objects.filter(slug__in=slugs, stock=False).delete()
+    Query.objects.filter(stock=True).exclude(slug__in=slugs).delete()
+
+    # Insert/update records as required
+    for row in app_settings.QUERY_STOCK_QUERIES:
+        try:
+            query = Query.objects.get(slug=row['slug'])
+        except Query.DoesNotExist:
+            query = Query(slug=row['slug'])
+        query.title = row['title']
+        query.sql = row['sql']
+        query.notes = row['notes']
+        query.stock = True
+        query.save()
+
+
 def perform_query(sql, params, log=False, validate=True):
     start = time.perf_counter()
     if log:

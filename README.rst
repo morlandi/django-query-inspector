@@ -142,6 +142,7 @@ App settings
 
     QUERY_INSPECTOR_QUERY_SUPERUSER_ONLY = True
     QUERY_INSPECTOR_QUERY_DEFAULT_LIMIT = 0
+    QUERY_INSPECTOR_QUERY_STOCK_QUERIES = []
     QUERY_INSPECTOR_SQL_BLACKLIST = (
         'ALTER',
         'RENAME ',
@@ -685,3 +686,25 @@ Usage::
                             Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
       --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the
                             DJANGO_SETTINGS_MODULE environment variable will be used.
+
+
+**load_stock_queries: Load stock (readonly) queries from settings.QUERY_INSPECTOR_QUERY_STOCK_QUERIES list**
+
+Application should provide a list of stock queries as follows::
+
+    SQL_QUERIES = [{
+        'slug': '...',
+        'title': '...',
+        'sql': """
+            select
+            ...
+            """,
+        'notes': "...",
+    }, {
+        ...
+    }]
+
+Ideally, you should run this command at deployment time, to make sure that stock queries
+are always updated with sources.
+
+During development, a "Reload stock queries" button is also available in the changelist.
