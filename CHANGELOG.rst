@@ -3,6 +3,10 @@
 History
 =======
 
+v1.1.8
+------
+* Added missing migration
+
 v1.1.7
 ------
 * Stock queries support
