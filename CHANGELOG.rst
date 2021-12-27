@@ -3,6 +3,11 @@
 History
 =======
 
+v1.1.9
+------
+* Prepare for Django 4.0
+* Support for Sqlite3 params
+
 v1.1.8
 ------
 * Added missing migration
