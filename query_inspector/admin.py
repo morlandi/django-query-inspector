@@ -9,7 +9,7 @@ from django.urls import path
 from django.shortcuts import render
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from query_inspector import query_debugger, trace
 
 from .app_settings import QUERY_DEFAULT_LIMIT
