@@ -84,6 +84,8 @@ DATABASES = {
     }
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -175,3 +177,6 @@ QUERYCOUNT = {
 #         },
 #     },
 # }
+
+from project.sql import SQL_QUERIES
+QUERY_INSPECTOR_QUERY_STOCK_QUERIES = SQL_QUERIES
