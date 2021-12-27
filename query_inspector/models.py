@@ -2,10 +2,12 @@ import re
 from django.db import models
 from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 from .app_settings import QUERY_SUPERUSER_ONLY
 
 
-_named_parameters_re = re.compile(r"\%\(([^\)]+)\)s")
+_named_parameters_postgresql_re = re.compile(r"\%\(([^\)]+)\)s")
+_named_parameters_sqlite_re = re.compile(r"\$([^ )]+)")
 
 
 class Query(models.Model):
@@ -37,6 +39,18 @@ class Query(models.Model):
         return False
 
     def extract_named_parameters(self):
+
+        def is_sqlite_engine():
+            """
+            TODO: find a better way
+            """
+            return 'sqlite3' in settings.DATABASES['default']['ENGINE']
+
+        if is_sqlite_engine():
+            _named_parameters_re = _named_parameters_sqlite_re
+        else:
+            _named_parameters_re = _named_parameters_postgresql_re
+
         params = _named_parameters_re.findall(self.sql)
         # Validation step: after removing params, are there
         # any single `%` symbols that will confuse psycopg2?
