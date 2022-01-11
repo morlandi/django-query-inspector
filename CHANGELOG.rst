@@ -3,6 +3,9 @@
 History
 =======
 
+....
+* Examples for "sitecopy" settings
+
 v1.1.9
 ------
 * Prepare for Django 4.0

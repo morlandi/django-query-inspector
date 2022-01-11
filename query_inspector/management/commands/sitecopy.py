@@ -71,6 +71,21 @@ class Command(BaseCommand):
         parser.add_argument('--quiet', '-q', action='store_true', default=False, help="do not require user confirmation before executing commands")
         parser.add_argument('--host', default=REMOTE_HOST_DEFAULT, help='Default: "{host}"'.format(host=REMOTE_HOST_DEFAULT))
 
+    def hints(self):
+        try:
+            project = settings.DATABASES['default']['NAME']
+        except:
+            project = "PROJECT"
+
+        print("""You might also want to add "SOURCE_MEDIA_FOLDER" setting.
+Examples:
+
+SITECOPY_REMOTE_HOST_DEFAULT = "{project}.somewhere.net"
+SITECOPY_PROJECT = "{project}"
+SITECOPY_SOURCE_MEDIA_FOLDER = "/home/{project}/public/media/"  ... default; or:
+SITECOPY_SOURCE_MEDIA_FOLDER = "/home/{project}/data/media/"
+""".format(project=project))
+
     def handle(self, *args, **options):
         self.dry_run = options['dry_run']
         self.quiet = options['quiet']
@@ -86,6 +101,7 @@ class Command(BaseCommand):
             print('ERROR: "SITECOPY_PROJECT" setting is missing.')
             errors += 1
         if errors > 0:
+            self.hints()
             return
 
         try:
