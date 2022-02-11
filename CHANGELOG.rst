@@ -3,7 +3,8 @@
 History
 =======
 
-....
+v1.1.10
+-------
 * Examples for "sitecopy" settings
 
 v1.1.9
