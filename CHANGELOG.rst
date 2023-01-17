@@ -3,6 +3,10 @@
 History
 =======
 
+v1.1.11
+-------
+* Specify default_auto_field to avoid unexpected migrations
+
 v1.1.10
 -------
 * Examples for "sitecopy" settings
