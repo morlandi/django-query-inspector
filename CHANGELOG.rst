@@ -3,6 +3,10 @@
 History
 =======
 
+v1.1.12
+-------
+* Fix normalized_export_filename()
+
 v1.1.11
 -------
 * Specify default_auto_field to avoid unexpected migrations

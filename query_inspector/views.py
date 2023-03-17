@@ -12,7 +12,8 @@ def normalized_export_filename(title, extension):
     """
     Provides a default filename; "%Y-%m-%d_%H-%M-%S__TITLE.EXTENNSION"
     """
-    filename = timezone.localtime().strftime('%Y-%m-%d_%H-%M-%S__') + slugify(title)
+    #filename = timezone.localtime().strftime('%Y-%m-%d_%H-%M-%S__') + slugify(title)
+    filename = timezone.now().strftime('%Y-%m-%d_%H-%M-%S__') + slugify(title)
     if extension.startswith(os.path.extsep):
         filename += extension
     else:
