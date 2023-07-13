@@ -135,6 +135,7 @@ Inspired by:
 
     query_preview
 
+
 App settings
 ------------
 
@@ -151,6 +152,17 @@ App settings
         'CREATED',
         'UPDATED',
         ...
+
+=================================== ============================================
+key                                 example
+=================================== ============================================
+SITECOPY_REMOTE_HOST                project.somewhere.com"
+SITECOPY_REMOTE_PROJECT_INSTANCE    project"
+SITECOPY_REMOTE_MEDIA_FOLDER        /home/project/public/media/"
+SITESYNC_WEBSERVER_PROCESS_NAME     project_gunicorn'
+SITESYNC_SUPERVISOR_URL             http://admin:PASSWORD@localhost:9090/RPC2'
+DUMP_LOCAL_DATA_TARGET_FOLDER       BASE_DIR/dumps/localhost'
+=================================== ============================================
 
 @query_debugger
 ---------------
@@ -604,13 +616,7 @@ read access via SSH.
 You're advised to double-check implied actions by dry-running these commands
 before proceeding.
 
-**sitecopy: Syncs database and media files for local project from a remote instance**
-
-Settings::
-
-    REMOTE_HOST_DEFAULT = getattr(settings, 'SITECOPY_REMOTE_HOST_DEFAULT', '<REMOTE_HOST>')
-    PROJECT = getattr(settings, 'SITECOPY_PROJECT', '<PROJECT>')
-    SOURCE_MEDIA_FOLDER = getattr(settings, 'SITECOPY_SOURCE_MEDIA_FOLDER', '/home/%s/public/media/' % PROJECT)
+**sitecopy: Syncs database and media files from remote project "project" running on remote server "project.somewhere.com"**
 
 Usage::
 

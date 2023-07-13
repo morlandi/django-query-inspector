@@ -3,6 +3,10 @@
 History
 =======
 
+v1.2.0
+------
+* sitecopy refactored to support sitesync
+
 v1.1.12
 -------
 * Fix normalized_export_filename()

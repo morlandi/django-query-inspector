@@ -29,3 +29,8 @@ SQL_WHITELIST = getattr(
         'REGEXP_REPLACE'
     )
 )
+
+REMOTE_HOST = getattr(settings, 'SITECOPY_REMOTE_HOST', '')
+REMOTE_PROJECT_INSTANCE = getattr(settings, 'SITECOPY_REMOTE_PROJECT_INSTANCE', '')
+REMOTE_MEDIA_FOLDER = getattr(settings, 'SITECOPY_REMOTE_MEDIA_FOLDER', '')  # /home/%s/public/media/' % PROJECT)
+
