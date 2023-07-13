@@ -1,4 +1,4 @@
-import signal
+#import signal
 import datetime
 import time
 import traceback
@@ -17,8 +17,8 @@ def fail(*messages):
     exit(-1)
 
 
-def signal_handler(signal, frame):
-    sys.exit(0)
+# def signal_handler(signal, frame):
+#     sys.exit(0)
 
 
 def get_remote_project_instance():
@@ -66,9 +66,9 @@ def get_remote_media_folder():
 
 class Command(BaseCommand):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        signal.signal(signal.SIGINT, signal_handler)
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     signal.signal(signal.SIGINT, signal_handler)
 
     help = 'Syncs database and media files from remote project "{project}" running on remote server "{remote_server}"'.format(
         project=get_remote_project_instance(),

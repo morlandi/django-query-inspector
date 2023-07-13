@@ -3,6 +3,10 @@
 History
 =======
 
+v1.2.1
+------
+* comment out "signal" from sitecopy management command
+
 v1.2.0
 ------
 * sitecopy refactored to support sitesync
