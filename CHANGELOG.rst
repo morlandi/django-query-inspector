@@ -3,6 +3,10 @@
 History
 =======
 
+v1.2.2
+------
+* export preview as CSV, JSONL or XLSX
+
 v1.2.1
 ------
 * comment out "signal" from sitecopy management command

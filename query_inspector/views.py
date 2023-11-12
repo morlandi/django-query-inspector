@@ -1,16 +1,18 @@
 import io
 import os
 import csv
+import json
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.http import StreamingHttpResponse
 from .exporters import open_xlsx_file, SpreadsheetQuerysetExporter
 from .templatetags.query_inspector_tags import render_queryset_as_data
+from .app_settings import DEFAULT_CSV_FIELD_DELIMITER
 
 
 def normalized_export_filename(title, extension):
     """
-    Provides a default filename; "%Y-%m-%d_%H-%M-%S__TITLE.EXTENNSION"
+    Provides a default filename; "%Y-%m-%d_%H-%M-%S__TITLE.EXTENSION"
     """
     #filename = timezone.localtime().strftime('%Y-%m-%d_%H-%M-%S__') + slugify(title)
     filename = timezone.now().strftime('%Y-%m-%d_%H-%M-%S__') + slugify(title)
@@ -21,7 +23,7 @@ def normalized_export_filename(title, extension):
     return filename
 
 
-def export_any_queryset(request, queryset, filename, excluded_fields=[], included_fields=[], csv_field_delimiter = ";"):
+def export_any_queryset(request, queryset, filename, excluded_fields=[], included_fields=[], csv_field_delimiter=DEFAULT_CSV_FIELD_DELIMITER):
     """
     Export queryset using SpreadsheetQuerysetExporter()
     """
@@ -69,7 +71,7 @@ def export_any_queryset(request, queryset, filename, excluded_fields=[], include
     return response
 
 
-def export_any_dataset(request, *fields, queryset, filename, csv_field_delimiter = ";"):
+def export_any_dataset(request, *fields, queryset, filename, csv_field_delimiter=DEFAULT_CSV_FIELD_DELIMITER):
     """
     Export queryset using render_queryset_as_data()
     """
@@ -87,6 +89,13 @@ def export_any_dataset(request, *fields, queryset, filename, csv_field_delimiter
         writer.writerow(headers)
         for row in rows:
             writer.writerow(row)
+
+    elif file_format == "jsonl":
+        content_type = 'application/jsonl'
+        output = io.StringIO()
+        output.write(json.dumps(headers) + '\n')
+        for row in rows:
+            output.write(json.dumps(row) + '\n')
 
     elif file_format == 'xlsx':
         content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

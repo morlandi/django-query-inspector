@@ -16,6 +16,8 @@ from .app_settings import QUERY_DEFAULT_LIMIT
 from .models import Query
 from .sql import perform_query
 from .sql import reload_stock_queries
+from .views import normalized_export_filename
+from .views import export_any_dataset
 
 
 @admin.register(Query)
@@ -140,6 +142,7 @@ class QueryAdmin(admin.ModelAdmin):
         recordset = []
         elapsed = None
         if request.method == 'POST':
+
             try:
                 start = time.perf_counter()
 
@@ -148,6 +151,18 @@ class QueryAdmin(admin.ModelAdmin):
                     sql += ' limit %d' % sql_limit
 
                 recordset = perform_query(sql, params, log=True, validate=True)
+                if 'btn-export-csv' in request.POST:
+                    filename = normalized_export_filename(obj.slug, "csv")
+                    response = export_any_dataset(request, "*", queryset=recordset, filename=filename)
+                    return response
+                elif 'btn-export-jsonl' in request.POST:
+                    filename = normalized_export_filename(obj.slug, "jsonl")
+                    response = export_any_dataset(request, "*", queryset=recordset, filename=filename)
+                    return response
+                elif 'btn-export-xlsx' in request.POST:
+                    filename = normalized_export_filename(obj.slug, "xlsx")
+                    response = export_any_dataset(request, "*", queryset=recordset, filename=filename)
+                    return response
 
                 # Save default parameters
                 obj.default_parameters = params
@@ -159,6 +174,12 @@ class QueryAdmin(admin.ModelAdmin):
                 recordset = []
                 elapsed = ''
                 messages.error(request, str(e))
+
+        try:
+            import xlsxwriter
+            xlsxwriter_available = True
+        except ModuleNotFoundError as e:
+            xlsxwriter_available = False
 
         return render(
             request,
@@ -177,5 +198,6 @@ class QueryAdmin(admin.ModelAdmin):
                 'recordset': recordset,
                 'elapsed': elapsed,
                 'sql_limit': sql_limit,
+                'xlsxwriter_available': xlsxwriter_available,
             }
         )

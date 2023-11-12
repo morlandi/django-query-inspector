@@ -26,8 +26,6 @@
 <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
     &rsaquo;
-    <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
-    &rsaquo;
     {% if has_view_permission %}
         <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
     {% else %}
@@ -76,6 +74,29 @@
         class="btn"
         type="submit"
         value="{% blocktranslate %}Run query{% endblocktranslate %}"
+        name="btn-run"
+    />
+    <input
+        class="btn"
+        style="background-color: #007bff;"
+        type="submit"
+        value="{% blocktranslate %}Export as CSV{% endblocktranslate %}"
+        name="btn-export-csv"
+    />
+    <input
+        class="btn"
+        style="background-color: #007bff;"
+        type="submit"
+        value="{% blocktranslate %}Export as JSONL{% endblocktranslate %}"
+        name="btn-export-jsonl"
+    />
+    <input
+        class="btn"
+        style="background-color: #007bff;"
+        type="submit"
+        value="{% blocktranslate %}Export as XLSX{% endblocktranslate %}"
+        name="btn-export-xlsx"
+        {% if not xlsxwriter_available %}disabled{% endif %}
     />
 </form>
 
@@ -83,6 +104,7 @@
         <br />
         <b>{% translate 'Record count' %}: {{recordset|length}}</b>
         {% translate 'Elapsed time' %}: {{elapsed}} <span> [s]</span>
+
         <table id="recordset-table" class="simpletable smarttable">
             {% render_queryset_as_table "*" queryset=recordset %}
         </table>
