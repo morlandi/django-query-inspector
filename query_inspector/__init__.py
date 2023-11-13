@@ -1,4 +1,4 @@
-__version__ = '1.0.8'
+__version__ = '1.0.8.2'
 
 from .query_debugger import query_debugger
 from .generic import get_object_by_uuid_or_404
