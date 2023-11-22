@@ -3,6 +3,10 @@
 History
 =======
 
+v1.2.3
+------
+* Add sql_views in stock queries
+
 v1.2.2
 ------
 * export preview as CSV, JSONL or XLSX
