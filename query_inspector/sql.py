@@ -45,8 +45,16 @@ def reload_stock_queries():
 
     from .models import Query
 
+    # Build the list of slq_views it a suitable callback has been given
+    sql_views = []
+    f_list_sql_views = app_settings.QUERY_STOCK_VIEWS
+    if f_list_sql_views is not None:
+        sql_views = f_list_sql_views()
+
     # Cleanup
-    slugs = [row['slug'] for row in app_settings.QUERY_STOCK_QUERIES]
+    stock_queries_slugs = [row['slug'] for row in app_settings.QUERY_STOCK_QUERIES]
+    sql_views_slugs = [klass._meta.db_table for klass in sql_views]
+    slugs = stock_queries_slugs + sql_views_slugs
     Query.objects.filter(slug__in=slugs, stock=False).delete()
     Query.objects.filter(stock=True).exclude(slug__in=slugs).delete()
 
@@ -59,6 +67,23 @@ def reload_stock_queries():
         query.title = row['title']
         query.sql = row['sql']
         query.notes = row['notes']
+        query.stock = True
+        query.save()
+
+    # Also add sql views
+    for sql_view in sql_views:
+        slug = sql_view._meta.db_table
+        try:
+            query = Query.objects.get(slug=slug)
+        except Query.DoesNotExist:
+            query = Query(slug=slug)
+        query.title = '%sVIEW "%s" (Model %s)' % (
+            'MATERIALIZED ' if sql_view.materialized else '',
+            slug,
+            sql_view.__name__
+        )
+        query.sql = 'select * from ' + slug
+        # query.notes = row['notes']
         query.stock = True
         query.save()
 
