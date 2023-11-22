@@ -144,6 +144,7 @@ App settings
     QUERY_INSPECTOR_QUERY_SUPERUSER_ONLY = True
     QUERY_INSPECTOR_QUERY_DEFAULT_LIMIT = 0
     QUERY_INSPECTOR_QUERY_STOCK_QUERIES = []
+    QUERY_INSPECTOR_QUERY_STOCK_VIEWS = None
     DEFAULT_CSV_FIELD_DELIMITER = ';'
     QUERY_INSPECTOR_SQL_BLACKLIST = (
         'ALTER',
@@ -715,3 +716,6 @@ Ideally, you should run this command at deployment time, to make sure that stock
 are always updated with sources.
 
 During development, a "Reload stock queries" button is also available in the changelist.
+
+You can optionally specify in `settings.QUERY_INSPECTOR_QUERY_STOCK_VIEWS`
+a callable to list the sql views Models to be included in Stock queries
