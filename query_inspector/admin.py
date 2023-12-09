@@ -24,7 +24,7 @@ from .views import export_any_dataset
 class QueryAdmin(admin.ModelAdmin):
 
     list_display = ("slug", 'stock', "title", "list_parameters", )
-    list_filter = ('stock', )
+    list_filter = ('stock', 'from_view', 'from_materialized_view', )
     save_on_top = True
 
     fieldsets = (

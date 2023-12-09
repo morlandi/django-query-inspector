@@ -17,6 +17,8 @@ class Query(models.Model):
     default_parameters = models.JSONField(null=False, default=dict, blank=True)
     notes = models.TextField(null=False, blank=True)
     stock = models.BooleanField(null=False, default=False, editable=False)
+    from_view = models.BooleanField(null=False, default=False, editable=False)
+    from_materialized_view = models.BooleanField(null=False, default=False, editable=False)
 
     class Meta:
         abstract = False
@@ -94,5 +96,7 @@ class Query(models.Model):
         obj.slug = new_slug(obj.slug)
         obj.title = obj.slug
         obj.stock = False
+        obj.from_view = False
+        obj.from_materialized_view = False
         obj.save()
         return obj
