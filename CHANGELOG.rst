@@ -3,6 +3,11 @@
 History
 =======
 
+v1.2.4
+------
+* QUERY_INSPECTOR_QUERY_STOCK_QUERIES can be either a list, or a callable which returns a list
+* Identify stock queries created from views and materialized views
+
 v1.2.3
 ------
 * Add sql_views in stock queries

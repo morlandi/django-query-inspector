@@ -717,5 +717,8 @@ are always updated with sources.
 
 During development, a "Reload stock queries" button is also available in the changelist.
 
-You can optionally specify in `settings.QUERY_INSPECTOR_QUERY_STOCK_VIEWS`
+QUERY_INSPECTOR_QUERY_STOCK_QUERIES can be either a list, or a callable which returns a list.
+
+
+**Additionally**, you can optionally specify in `settings.QUERY_INSPECTOR_QUERY_STOCK_VIEWS`
 a callable to list the sql views Models to be included in Stock queries
