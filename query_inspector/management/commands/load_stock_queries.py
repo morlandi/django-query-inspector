@@ -28,7 +28,8 @@ class Command(BaseCommand):
         self.using = options['database']
 
         with transaction.atomic(using=self.using):
-            reload_stock_queries()
+            n = reload_stock_queries()
+            print('%d stock queries have been created or updated' % n)
 
         # Close the DB connection -- unless we're still in a transaction. This
         # is required as a workaround for an edge case in MySQL: if the same

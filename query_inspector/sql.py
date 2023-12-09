@@ -45,30 +45,38 @@ def reload_stock_queries():
 
     from .models import Query
 
-    # Build the list of slq_views it a suitable callback has been given
+    # Build the list of slq_views if a suitable callback has been given
     sql_views = []
     f_list_sql_views = app_settings.QUERY_STOCK_VIEWS
     if f_list_sql_views is not None:
         sql_views = f_list_sql_views()
 
+    # Build the list of sql_queries; it can be either a list ...
+    sql_queries = app_settings.QUERY_STOCK_QUERIES
+    # ... or a callable which returns a list
+    if callable(sql_queries):
+        sql_queries = sql_queries()
+
     # Cleanup
-    stock_queries_slugs = [row['slug'] for row in app_settings.QUERY_STOCK_QUERIES]
+    stock_queries_slugs = [row['slug'] for row in sql_queries]
     sql_views_slugs = [klass._meta.db_table for klass in sql_views]
     slugs = stock_queries_slugs + sql_views_slugs
     Query.objects.filter(slug__in=slugs, stock=False).delete()
     Query.objects.filter(stock=True).exclude(slug__in=slugs).delete()
 
     # Insert/update records as required
-    for row in app_settings.QUERY_STOCK_QUERIES:
+    n = 0
+    for row in sql_queries:
         try:
             query = Query.objects.get(slug=row['slug'])
         except Query.DoesNotExist:
             query = Query(slug=row['slug'])
-        query.title = row['title']
+        query.title = row.get('title', '')
         query.sql = row['sql']
-        query.notes = row['notes']
+        query.notes = row.get('notes', '')
         query.stock = True
         query.save()
+        n += 1
 
     # Also add sql views
     for sql_view in sql_views:
@@ -85,7 +93,12 @@ def reload_stock_queries():
         query.sql = 'select * from ' + slug
         # query.notes = row['notes']
         query.stock = True
+        query.from_view = True
+        query.from_materialized_view = sql_view.materialized
         query.save()
+        n += 1
+
+    return n
 
 
 def perform_query(sql, params, log=False, validate=True):
