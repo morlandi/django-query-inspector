@@ -3,6 +3,13 @@
 History
 =======
 
+v1.2.5
+------
+- "enabled" boolean field added
+- "slug" is no longer unique, and a Query.objects.get_query_for_slug(query_name)
+  is available for retriving the active query associated with a certain slug
+  and detect any duplication
+
 v1.2.4
 ------
 * QUERY_INSPECTOR_QUERY_STOCK_QUERIES can be either a list, or a callable which returns a list

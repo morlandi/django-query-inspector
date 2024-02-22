@@ -23,8 +23,10 @@ from .views import export_any_dataset
 @admin.register(Query)
 class QueryAdmin(admin.ModelAdmin):
 
-    list_display = ("slug", 'stock', "title", "list_parameters", )
-    list_filter = ('stock', 'from_view', 'from_materialized_view', )
+    list_display = ("slug", 'is_duplicated', 'enabled', 'stock', "title", "list_parameters", )
+    list_editable = ('enabled', )
+    list_filter = ('enabled', 'stock', 'from_view', 'from_materialized_view', )
+    search_fields = ['slug', ]
     save_on_top = True
 
     fieldsets = (

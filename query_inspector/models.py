@@ -10,15 +10,44 @@ _named_parameters_postgresql_re = re.compile(r"\%\(([^\)]+)\)s")
 _named_parameters_sqlite_re = re.compile(r"\$([^ )]+)")
 
 
+class QueryManager(models.Manager):
+
+    def get_active_query_from_slug(self, slug):
+        """
+        Since slug is no longer unique, you can use this helper to identify the active query
+        associated with a certain slug (thus excluding all disabled queries);
+        in case of ambiguity it returns None
+
+        Example:
+
+            my_query = Query.objects.get_query_for_slug(query_name)
+
+        """
+        queryset = (
+            self.get_queryset()
+            .filter(
+                enabled=True,
+                #slug=slug,
+            )
+        )
+        return queryset.get(slug=slug)
+        # if queryset.count() == 1:
+        #     return queryset.first()
+        # return None
+
+
 class Query(models.Model):
     title = models.CharField(blank=True, max_length=128)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=False)
+    enabled = models.BooleanField(null=False, default=True)
     sql = models.TextField(null=False, blank=True)
     default_parameters = models.JSONField(null=False, default=dict, blank=True)
     notes = models.TextField(null=False, blank=True)
     stock = models.BooleanField(null=False, default=False, editable=False)
     from_view = models.BooleanField(null=False, default=False, editable=False)
     from_materialized_view = models.BooleanField(null=False, default=False, editable=False)
+
+    objects = QueryManager()
 
     class Meta:
         abstract = False
@@ -39,6 +68,22 @@ class Query(models.Model):
         if request.user.is_superuser or not QUERY_SUPERUSER_ONLY:
             return True
         return False
+
+    @property
+    def is_duplicated(self):
+        """
+        Returns True iif this query is enabled, and another enabled query
+        having the same slug has been detected
+        """
+        duplicated = False
+        if self.enabled:
+            try:
+                the_query = Query.objects.get_active_query_from_slug(self.slug)
+            except Query.MultipleObjectsReturned:
+                duplicated = True
+            except Exception as e:
+                pass
+        return duplicated
 
     def extract_named_parameters(self):
 

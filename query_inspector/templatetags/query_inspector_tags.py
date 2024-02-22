@@ -43,6 +43,10 @@ def ipdb(element):
     ipdb.set_trace()
     return element
 
+@register.simple_tag
+def obj_from_result_list(result_list, index):
+    instance = result_list[index]
+    return instance
 
 @register.filter
 def format_datetime(dt, include_time=True, include_seconds=False, exclude_date=False):
