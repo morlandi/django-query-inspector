@@ -3,6 +3,10 @@
 History
 =======
 
+v1.2.6
+------
+- preverve existing (non-stock) duplicates when reloading stock queries
+
 v1.2.5
 ------
 - "enabled" boolean field added

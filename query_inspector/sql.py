@@ -61,20 +61,19 @@ def reload_stock_queries():
     stock_queries_slugs = [row['slug'] for row in sql_queries]
     sql_views_slugs = [klass._meta.db_table for klass in sql_views]
     slugs = stock_queries_slugs + sql_views_slugs
-    Query.objects.filter(slug__in=slugs, stock=False).delete()
+    #Query.objects.filter(slug__in=slugs, stock=False).delete()
     Query.objects.filter(stock=True).exclude(slug__in=slugs).delete()
 
     # Insert/update records as required
     n = 0
     for row in sql_queries:
         try:
-            query = Query.objects.get(slug=row['slug'])
+            query = Query.objects.get(slug=row['slug'], stock=True)
         except Query.DoesNotExist:
-            query = Query(slug=row['slug'])
+            query = Query(slug=row['slug'], stock=True)
         query.title = row.get('title', '')
         query.sql = row['sql']
         query.notes = row.get('notes', '')
-        query.stock = True
         query.save()
         n += 1
 
@@ -82,9 +81,9 @@ def reload_stock_queries():
     for sql_view in sql_views:
         slug = sql_view._meta.db_table
         try:
-            query = Query.objects.get(slug=slug)
+            query = Query.objects.get(slug=slug, stock=True)
         except Query.DoesNotExist:
-            query = Query(slug=slug)
+            query = Query(slug=slug, stock=True)
         query.title = '%sVIEW "%s" (Model %s)' % (
             'MATERIALIZED ' if sql_view.materialized else '',
             slug,
@@ -92,7 +91,6 @@ def reload_stock_queries():
         )
         query.sql = 'select * from ' + slug
         # query.notes = row['notes']
-        query.stock = True
         query.from_view = True
         query.from_materialized_view = sql_view.materialized
         query.save()
