@@ -84,8 +84,11 @@ def prettyprint_query(query, params=None, colorize=True, prettify=True, reindent
 
         return sql
 
-    sql = _str_query(query, params)
+    sql = _str_query(query.replace('\n', ' '), params).strip()
     print(sql)
+    if params is not None:
+        trace('params[]: ' + str(params), color='black', on_color='on_white')
+    print("-" * 80)
 
 
 def prettyprint_queryset(qs, colorize=True, prettify=True, reindent=True):

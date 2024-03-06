@@ -3,6 +3,10 @@
 History
 =======
 
+v1.2.7
+------
+- improved `prettyprint_query()`
+
 v1.2.6
 ------
 - preverve existing (non-stock) duplicates when reloading stock queries
