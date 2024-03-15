@@ -1,5 +1,6 @@
 import time
 import traceback
+import json
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import admin
@@ -127,6 +128,16 @@ class QueryAdmin(admin.ModelAdmin):
             parameter: request.POST.get(parameter, request.GET.get(parameter, ""))
             for parameter in parameters
         }
+
+        # Adjust list parameters
+        # Es: "['my', 'id']" --> ['my', 'id']
+        # this is a rather weak solution which we might improve sooner or later
+        # Working use case:
+        # params = {'countries': "['my', 'id']"}
+        # sql = " ... WHERE lower(C.code) = ANY( %(countries)s )"
+        for key, value in params.items():
+            if value.startswith('[') and value.endswith(']'):
+                params[key] = json.loads(value.replace('\'', '"'))
 
         # Load default parameters
         if request.method =="GET":

@@ -3,6 +3,10 @@
 History
 =======
 
+v1.2.8
+------
+- support for list params in query preview
+
 v1.2.7
 ------
 - improved `prettyprint_query()`
