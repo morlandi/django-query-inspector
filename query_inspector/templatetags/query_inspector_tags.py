@@ -5,6 +5,7 @@ import datetime
 import io
 import csv
 import decimal
+from collections import OrderedDict
 from django.urls.exceptions import NoReverseMatch
 from django import template
 from django.urls import reverse
@@ -330,7 +331,7 @@ def render_queryset(*fields, queryset, mode, options):
         return current_value
 
     def get_cell_value(row, column):
-        if type(row) == dict:
+        if type(row) in [dict, OrderedDict, ]:
             value = row.get(column['name'])
         else:
             if '__' not in column['name']:
@@ -438,7 +439,7 @@ def render_queryset(*fields, queryset, mode, options):
 
     # Experimental: detect all fields
     if '*' in fields and num_rows > 0:
-        if type(rows[0]) == dict:
+        if type(rows[0]) in [dict, OrderedDict, ]:
             fields = tuple(rows[0].keys())
         else:
             fields = [f.name for f in rows[0]._meta.fields]

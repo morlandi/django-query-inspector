@@ -3,6 +3,10 @@
 History
 =======
 
+v1.2.9
+------
+- Accept dataset expressed as list of either dict or OrderedDict to keep dict ordering with old versions of Python
+
 v1.2.8
 ------
 - support for list params in query preview
