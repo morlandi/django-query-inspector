@@ -11,6 +11,8 @@ from django.conf import settings
 from .app_settings import REMOTE_HOST
 from .app_settings import REMOTE_PROJECT_INSTANCE
 from .app_settings import REMOTE_MEDIA_FOLDER
+from .app_settings import PRE_CUSTOM_ACTIONS
+from .app_settings import POST_CUSTOM_ACTIONS
 
 
 def run_sitecopy(dry_run, interactive):
@@ -20,6 +22,15 @@ def run_sitecopy(dry_run, interactive):
     assert REMOTE_MEDIA_FOLDER, "Missing setting SITECOPY_REMOTE_MEDIA_FOLDER"
 
     remote_host = REMOTE_HOST
+
+    ########################################################################
+
+    if PRE_CUSTOM_ACTIONS:
+        prompt("""(0) Custom actions:""")
+        for action in PRE_CUSTOM_ACTIONS:
+            run_command(action, dry_run=dry_run, interactive=interactive)
+
+    ########################################################################
 
     prompt("""(1) SYNC database "{project}" from remote server "{remote_server}":
 Here, we assume that user "{project}" has access to database "{project}" on remote (source) server ...""".format(
@@ -70,6 +81,13 @@ source_media_folder=REMOTE_MEDIA_FOLDER,
         target=target,
     )
     run_command(command, dry_run=dry_run, interactive=interactive)
+
+    ########################################################################
+
+    if POST_CUSTOM_ACTIONS:
+        prompt("""(3) Custom actions:""")
+        for action in POST_CUSTOM_ACTIONS:
+            run_command(action, dry_run=dry_run, interactive=interactive)
 
 #################################################################################
 # helpers

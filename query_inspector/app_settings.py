@@ -37,4 +37,6 @@ SQL_WHITELIST = getattr(
 REMOTE_HOST = getattr(settings, 'SITECOPY_REMOTE_HOST', '')
 REMOTE_PROJECT_INSTANCE = getattr(settings, 'SITECOPY_REMOTE_PROJECT_INSTANCE', '')
 REMOTE_MEDIA_FOLDER = getattr(settings, 'SITECOPY_REMOTE_MEDIA_FOLDER', '')  # /home/%s/public/media/' % PROJECT)
+PRE_CUSTOM_ACTIONS = getattr(settings, 'SITECOPY_PRE_CUSTOM_ACTIONS', [])
+POST_CUSTOM_ACTIONS = getattr(settings, 'SITECOPY_POST_CUSTOM_ACTIONS', [])
 
