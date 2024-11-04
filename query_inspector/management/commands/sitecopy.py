@@ -11,57 +11,45 @@ from query_inspector.app_settings import REMOTE_PROJECT_INSTANCE
 from query_inspector.app_settings import REMOTE_MEDIA_FOLDER
 
 
-def fail(*messages):
-    print('FATAL ERROR:')
-    print('\n'.join(messages))
-    exit(-1)
+def complain(*messages):
+    print(' '.join(messages))
 
 
 # def signal_handler(signal, frame):
 #     sys.exit(0)
 
 
-def get_remote_project_instance():
+def sanity_checks():
+    errors = 0
+
     project = REMOTE_PROJECT_INSTANCE
     if not project:
-        if getattr(settings, 'SITECOPY_PROJECT', ''):
-            fail('DEPRECATION ERROR: setting "SITECOPY_PROJECT" has been replaced by "SITECOPY_REMOTE_PROJECT_INSTANCE"')
-    if not project:
-        fail(
+        complain(
             '"settings.SITECOPY_REMOTE_PROJECT_INSTANCE" is not defined; example:',
             'SITECOPY_REMOTE_PROJECT_INSTANCE = "%s"' % settings.DATABASES['default']['NAME']
         )
-    return project
+        errors += 1
+        project = "[PROJECT]"
 
-
-def get_remote_host():
-    project = get_remote_project_instance()
     remote_host = REMOTE_HOST
     if not remote_host:
-        if getattr(settings, 'SITECOPY_REMOTE_HOST_DEFAULT', ''):
-            fail('DEPRECATION ERROR: setting "SITECOPY_REMOTE_HOST_DEFAULT" has been replaced by "SITECOPY_REMOTE_HOST"')
-    if not remote_host:
-        fail(
-            '"settings.SITECOPY_REMOTE_HOST" is not defined; example:',
+        complain(
+            '"settings.SITECOPY_REMOTE_HOST" is not defined;             example:',
             'SITECOPY_REMOTE_HOST = "%s.somewhere.net"' % project
         )
-    return remote_host
+        errors += 1
 
-
-def get_remote_media_folder():
-    project = get_remote_project_instance()
     remote_media_folder = REMOTE_MEDIA_FOLDER
     if not remote_media_folder:
-        if getattr(settings, 'SITECOPY_SOURCE_MEDIA_FOLDER', ''):
-            fail('DEPRECATION ERROR: setting "SITECOPY_SOURCE_MEDIA_FOLDER" has been replaced by "SITECOPY_REMOTE_MEDIA_FOLDER"')
-    if not remote_media_folder:
-        fail(
-            '"settings.SITECOPY_REMOTE_MEDIA_FOLDER" is not defined; examples:',
-            'SITECOPY_REMOTE_MEDIA_FOLDER = "/home/%s/public/media/" or:' % project,
-            'SITECOPY_REMOTE_MEDIA_FOLDER = "/home/%s/data/media/" or:' % project,
+        complain(
+            '"settings.SITECOPY_REMOTE_MEDIA_FOLDER" is not defined;     example:',
+            'SITECOPY_REMOTE_MEDIA_FOLDER = "/home/%s/public/media/"' % project,
         )
-    return remote_media_folder
+        errors += 1
 
+    if errors > 0:
+        print("FATAL ERRORS ENCOUNTERED; UNABLE TO CONTINUE")
+        exit(-1)
 
 
 class Command(BaseCommand):
@@ -70,10 +58,11 @@ class Command(BaseCommand):
     #     super().__init__(*args, **kwargs)
     #     signal.signal(signal.SIGINT, signal_handler)
 
-    help = 'Syncs database and media files from remote project "{project}" running on remote server "{remote_server}"'.format(
-        project=get_remote_project_instance(),
-        remote_server=get_remote_host()
-    )
+    # help = 'Syncs database and media files from remote project "{project}" running on remote server "{remote_server}"'.format(
+    #     project=get_remote_project_instance(),
+    #     remote_server=get_remote_host()
+    # )
+    help = 'Syncs database and media files from remote remote instance'
 
     def add_arguments(self, parser):
         parser.add_argument('--dry-run', '-d', action='store_true', dest='dry_run', default=False, help='Dry run (simulate actions)', )
@@ -81,10 +70,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # Sanity check
-        get_remote_project_instance()
-        get_remote_host()
-        get_remote_media_folder()
+        sanity_checks()
 
         t0 = datetime.datetime.now()
         try:
