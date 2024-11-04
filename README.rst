@@ -109,6 +109,9 @@ Default settings (to be overridden in projects' settings)::
         'DISPLAY_DUPLICATES': 0,
     }
 
+When using `django-constance` (optional) the value of `IGNORE_ALL_REQUESTS` will
+be overridden by `config.QUERYCOUNT_IGNORE_ALL_REQUESTS` (if exists)
+
 Execute SQL statements
 ----------------------
 
@@ -164,6 +167,8 @@ SITECOPY_REMOTE_MEDIA_FOLDER        /home/project/public/media/"
 SITESYNC_WEBSERVER_PROCESS_NAME     project_gunicorn'
 SITESYNC_SUPERVISOR_URL             http://admin:PASSWORD@localhost:9090/RPC2'
 DUMP_LOCAL_DATA_TARGET_FOLDER       BASE_DIR/dumps/localhost'
+PRE_CUSTOM_ACTIONS                  []
+POST_CUSTOM_ACTIONS                 []
 =================================== ============================================
 
 @query_debugger
