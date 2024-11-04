@@ -128,7 +128,12 @@ class QueryCountMiddleware(MiddlewareMixin):
 
     def _ignore_request(self, path):
         """Check to see if we should ignore the request."""
-        if ACTUAL_QUERYCOUNT_SETTINGS['IGNORE_ALL_REQUESTS']:
+        try:
+            from constance import config
+            IGNORE_ALL_REQUESTS = config.QUERYCOUNT_IGNORE_ALL_REQUESTS
+        except:
+            IGNORE_ALL_REQUESTS = ACTUAL_QUERYCOUNT_SETTINGS['IGNORE_ALL_REQUESTS']
+        if IGNORE_ALL_REQUESTS:
             return True
         return any([
             re.match(pattern, path) for pattern in ACTUAL_QUERYCOUNT_SETTINGS['IGNORE_REQUEST_PATTERNS']
